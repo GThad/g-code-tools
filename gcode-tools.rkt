@@ -19,7 +19,7 @@
 ;; For example, "G0 X25.5 Y30" would correspond to
 ;; (command (code G 0) '((code X 25.5) (code Y 30)))
 ;;
-;; command: code?
+;; name: code?
 ;; parameters (listof code?)
 (struct command (command parameters))
 
