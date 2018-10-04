@@ -113,3 +113,85 @@
          [whitespace (import-gcode input-port)]
          [(re-seq gcode-letter (re-* whitespace) gcode-number)
           (cons (code-str->code lexeme) (import-gcode input-port))]))
+
+;; -------------------- CODES->COMMANDS
+
+;; Consumes two codes, and checks if param-code
+;; can be used as a parameter for a command with
+;; name name-code.
+;; Note: This function really defines our supported codes.
+;; Adding rudimentary support for a new code entails adding
+;; a new function and corresponding match entry.
+(define (parameter-for-command? param-code name-code)
+
+  (define (parameter-for-G0?)
+    (member? (code-letter param-code)
+             '(X Y Z)))
+
+  (define (parameter-for-G1?)
+    (member? (code-letter param-code)
+             '(X Y Z F)))
+
+  (define (parameter-for-G2-G3?)
+    (member? (code-letter param-code)
+             '(X Y Z I J K F R)))
+  
+  (match name-code
+    [(code 'G 0) (parameter-for-G0?)]
+    [(code 'G 1) (parameter-for-G1?)]
+    [(code 'G 2) (parameter-for-G2-G3?)]
+    [(code 'G 3) (parameter-for-G2-G3?)]
+    [_ #f]))
+
+
+;; Consumes a list of code? and produce a list of command? that groups
+;; the codes into commands.
+;;
+;; Note: This function does not guarantee a command list the user
+;; wants since there are multiple sensible command lists for the
+;; same code list. This function tries to be canonical.
+(define (codes->commands codes)
+  
+  ;; The helper function builds the command list. cmds+stack is a list (cmds new-cmd):
+  
+  ;; cmds holds the list of commands to be returned.
+  ;; new-cmd holds each partially built command as a list of code?.
+
+  ;; helper looks at next-code and cons it to
+  ;; new-cmd if its part of the command, otherwise
+  ;; it adds new-cmd to cmds, and starts
+  ;; a new command with next-code. If next-code is #f,
+  ;; then we know we are done, and can return cmds.
+
+  ;; Note cmds and new-cmd are reversed, so we can use cons rather than append.
+  (define (helper next-code cmds+new-cmd)
+    (define-values (cmds new-cmd) (values (first cmds+new-cmd) (second cmds+new-cmd)))
+    
+    ;; Produces a command? from new-cmd.
+    (define (new-cmd->command)
+      (define rev-cmd (reverse new-cmd))
+      (command (first rev-cmd) (rest rev-cmd)))
+
+    ;; Produces #t whenever next-code is part of new-cmd. This happens
+    ;; when
+    ;; 1. next-code is a proper parameter of the partially built new-cmd.
+    ;; 2. A parameter with the same letter as next-code is not already
+    ;;    defined in new-cmd.
+    (define (part-of-new-cmd?)
+      (and? (parameter-for-command? next-code (last new-cmd))
+            (not (findf (lambda (a-code)
+                          (code-letter=? a-code next-code))
+                        new-cmd))))
+    
+    (cond [(equal? #f next-code) (cons (new-cmd->command) cmds)]
+          [(part-of-new-cmd?)
+           (list cmds
+                 (cons next-code new-cmd))]
+           
+          [else
+           (list (cons (new-cmd->command) cmds)
+                 (list next-code))]))
+  
+  (reverse (foldl helper
+                  (list null (list (first codes)))
+                  (append (rest codes) '(#f)))))
