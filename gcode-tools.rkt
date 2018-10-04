@@ -9,19 +9,19 @@
          parser-tools/lex
          parser-tools/yacc)
 
-;; -------------------- UTILITY FUNCTIONS
+;; -------------------- UTILITY FUNCTIONS/MACROS
+
+;; Coerce everything except #f to a boolean.
+(define-syntax-rule (->boolean val)
+  (if val #t #f))
 
 ;; Like and but returns #t or #f.
-(define (and? . pred-exprs)
-  (if (apply 'and pred-exprs)
-      #t
-      #f))
+(define-syntax-rule (and? pred ...)
+  (->boolean (and pred ...)))
 
 ;; Like member but returns #t or #f.
-(define (member? v lst [is-equal? equal?])
-  (if (member v lst is-equal?)
-      #t
-      #f))
+(define-syntax-rule (member? val lst)
+  (->boolean (member val lst)))
 
 ;; -------------------- INTERNAL STRUCTURE 
 
