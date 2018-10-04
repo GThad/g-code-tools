@@ -21,7 +21,7 @@
 ;;
 ;; name: code?
 ;; parameters (listof code?)
-(struct command (command parameters))
+(struct command (name parameters))
 
 ;;-------------------- TOKENS
 
