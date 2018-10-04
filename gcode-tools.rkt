@@ -3,8 +3,25 @@
          racket/contract
          racket/bool
          racket/function
+         racket/match
+         racket/list
+         racket/struct
          parser-tools/lex
          parser-tools/yacc)
+
+;; -------------------- UTILITY FUNCTIONS
+
+;; Like and but returns #t or #f.
+(define (and? . pred-exprs)
+  (if (apply 'and pred-exprs)
+      #t
+      #f))
+
+;; Like member but returns #t or #f.
+(define (member? v lst [is-equal? equal?])
+  (if (member v lst is-equal?)
+      #t
+      #f))
 
 ;; -------------------- INTERNAL STRUCTURE 
 
