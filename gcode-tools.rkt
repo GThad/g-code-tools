@@ -30,7 +30,13 @@
 ;;
 ;; letter: symbol?
 ;; number: number?
-(struct code (letter number))
+(struct code (letter number)
+  #:transparent
+  #:methods gen:custom-write
+  [(define write-proc
+     (make-constructor-style-printer
+      (lambda (obj) 'code)
+      (lambda (obj) (list (code-letter obj) (code-number obj)))))])
 
 ;; A command represents a group of instructions in G-code corresponding to some single action.
 ;; For example, "G0 X25.5 Y30" would correspond to
@@ -38,7 +44,13 @@
 ;;
 ;; name: code?
 ;; parameters (listof code?)
-(struct command (name parameters))
+(struct command (name parameters)
+  #:transparent
+  #:methods gen:custom-write
+  [(define write-proc
+     (make-constructor-style-printer
+      (lambda (obj) 'command)
+      (lambda (obj) (list (command-name obj) (command-parameters obj)))))])
 
 ;; -------------------- CODE FUNCTIONS
 
