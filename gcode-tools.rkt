@@ -8,7 +8,6 @@
          racket/struct
          parser-tools/lex
          (prefix-in re- parser-tools/lex-sre)
-         parser-tools/yacc)
 
 ;; -------------------- UTILITY FUNCTIONS/MACROS
 
