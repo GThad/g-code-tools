@@ -7,7 +7,7 @@
          racket/list
          racket/struct
          parser-tools/lex
-         (prefix-in re- parser-tools/lex-sre)
+         (prefix-in re- parser-tools/lex-sre))
 
 ;; -------------------- UTILITY FUNCTIONS/MACROS
 
