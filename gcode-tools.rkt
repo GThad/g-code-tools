@@ -69,6 +69,22 @@
   (or ((make-letter-code-checker 'M) a-code)
       ((make-letter-code-checker 'm) a-code)))
 
+;; Consumes 2 or more code? and returns #t when they are all
+;; equal?
+(define (code=? . codes)
+  (cond [(> (length codes) 1)
+         (and (equal? (first codes) (second codes))
+              (apply code=? (rest codes)))]
+        [else #t]))
+
+;; Consumes 2 or more code? and returns #t when they are all
+;; have equal? letter.
+(define (code-letter=? . codes)
+  (cond [(> (length codes) 1)
+         (and (symbol=? (code-letter (first codes)) (code-letter (second codes)))
+              (apply code-letter=? (rest codes)))]
+        [else #t]))
+
 ;; -------------------- PARSING
 
 (define-lex-abbrev gcode-letter
