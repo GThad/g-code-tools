@@ -1,46 +1,88 @@
 #lang racket/base
-(require racket/string)
+(require racket/string
+         racket/contract
+         racket/bool
+         racket/function
+         parser-tools/lex
+         parser-tools/yacc)
 
-;; gcode-atom represents an atomic instruction in G-code. For example,
-;; "G0" and "X25.5" would correspond to (gcode-atom G 0) and (gcode-atom X 25.5)
+;; -------------------- INTERNAL STRUCTURE 
+
+;; A code represents a single instruction in G-code. For example,
+;; "G0" and "X25.5" would correspond to (code G 0) and (code X 25.5)
 ;;
 ;; letter: symbol?
 ;; number: number?
-(struct gcode-atom (letter number))
+(struct code (letter number))
 
-;; gcode-command represents a command in G-code. For example,
-;; "G0 X25.5 Y30" would correspond to
-;; (gcode-command (gcode-atom G 0) '((gcode-atom X 25.5) (gcode-atom Y 30)))
+;; A command represents a group of instructions in G-code corresponding to some single action.
+;; For example, "G0 X25.5 Y30" would correspond to
+;; (command (code G 0) '((code X 25.5) (code Y 30)))
 ;;
-;; command: gcode-atom?
-;; arguments: (listof gcode-atom?)
-(struct gcode-command (command arguments))
+;; command: code?
+;; parameters (listof code?)
+(struct command (command parameters))
 
-;; gcode->atoms: str -> (listof gcode-atoms?)
-;; This function consumes a string of G-code and produces a list of
-;; corresponding gcode-atom? corresponding.
-;; Note this function places no restrictions on the form of str other than
-;; it be proper G-code. This function does not care about whitespace.
-(define (gcode->atoms str)
-  (define (remove-white-space a-str)
-    (string-replace a-str #px"\\s" ""))
-  (define (remove-comments a-str)
-    (string-replace a-str #px"\\(.*\\)" ""))
-  (define (split-into-atoms a-str)
-    (regexp-match* #px"([G|M|S|F|X|Y|Z|I|J|K])([-|+]?\\d*\\.?\\d+)"
-                  a-str
-                  #:match-select cdr))
-  (define (pair->atom a-pair)
-    (gcode-atom (string->symbol (car a-pair))
-                (string->number (cadr a-pair))))
-  
-  (map pair->atom
-       (split-into-atoms (remove-comments (remove-white-space str)))))
+;;-------------------- TOKENS
 
-;; atom->commands: (listof gcode-atom?) -> (listof gcode-command?)
-;; This function consumes a list of gcode-atom? and produces a list of
-;; corresponding gcode-command?. It does this by looking at each atom. If
-;; we see a command atom, then we grab atoms until the next
-;; command atom.
-(define (atoms>commands atom-list)
-  ...)
+;; Defines tokens used during lexing. Produces
+;; functions for creating token structs.
+;;     (token-CODE-LETTER value) -> (token 'CODE-LETTER value)
+;;     (token-CODE-NUMBER value) -> (token 'CODE-NUMBER value)
+;; where value is anything.
+(define-tokens code-tokens (CODE-LETTER CODE-NUMBER))
+(define-empty-tokens empty-tokens (EOF))
+
+;; Consumes anything and produces #t whenever expr is a
+;; CODE-LETTER token.
+(define (token-CODE-LETTER? expr)
+  (and (token? expr)
+       (symbol=? 'CODE-LETTER (token-name expr))))
+
+;; Consumes anything and produces #t whenever expr is a
+;; CODE-NUMBER token.
+(define (token-CODE-NUMBER? expr)
+  (and (token? expr)
+       (symbol=? 'CODE-NUMBER (token-name expr))))
+
+;; Consumes anything and produces #t whenever the argument is
+;; a CODE-LETTER or CODE-NUMBER token.
+(define gcode-token?
+  (or/c token-CODE-LETTER?
+        token-CODE-NUMBER?))
+
+;;-------------------- LEXING
+
+;; Consumes an input-port?, reads from the input-port exactly
+;; enough characters to produce a single token.
+(define gcode-input->token
+  (lexer [(eof) (token-EOF)]
+         ;; Recursive call effectively skips whitespace
+         [whitespace (gcode-input->token input-port)]
+         [(union #\G #\M #\S #\F #\X #\Y #\Z #\I #\J #\K
+                 #\g #\m #\s #\f #\x #\y #\z #\i #\j #\k)
+          (token-CODE-LETTER lexeme)]
+         [numeric
+          (token-CODE-NUMBER (string->number lexeme))]))
+
+;;-------------------- PARSING
+
+;; Consumes a generator that produces tokens, and parses them into
+;; code?
+(define tokens->internal-gcode
+    (parser
+     (tokens code-tokens empty-tokens)
+     (start code-list)
+     (end EOF)
+     (error (lambda (tok-ok? tok-name tok-value)
+              (print "Error")))
+     (grammar (code-list
+               ((code) (list $1))
+               ((code code-list) (cons $1 $2)))
+              (code
+               ((CODE-LETTER CODE-NUMBER) (code $1 $2))))))
+
+;; High-level parsing function consuming an input-port? with G-Code and producing
+;; an equivalent list of code?.
+(define (import-gcode input)
+  (tokens->internal-gcode (lambda () (gcode-input->token input))))
