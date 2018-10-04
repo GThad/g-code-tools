@@ -97,7 +97,7 @@
   (or/c token-CODE-LETTER?
         token-CODE-NUMBER?))
 
-;;-------------------- LEXING
+;; -------------------- LEXING
 
 ;; Consumes an input-port?, reads from the input-port exactly
 ;; enough characters to produce a single token.
@@ -111,7 +111,7 @@
          [numeric
           (token-CODE-NUMBER (string->number lexeme))]))
 
-;;-------------------- PARSING
+;; -------------------- PARSING
 
 ;; Consumes a generator that produces tokens, and parses them into
 ;; code?
