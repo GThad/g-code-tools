@@ -23,7 +23,24 @@
 ;; parameters (listof code?)
 (struct command (name parameters))
 
-;;-------------------- TOKENS
+;; -------------------- CODE FUNCTIONS
+
+;; Consumes a symbol and returns a function that
+;; consumes a code? and produces true whenever the letter
+;; of the code matches letter.
+(define (make-letter-code-checker letter)
+  (lambda (a-code)
+    (symbol=? letter (code-letter a-code))))
+
+(define (g-code? a-code)
+  (or ((make-letter-code-checker 'G) a-code)
+      ((make-letter-code-checker 'g) a-code)))
+
+(define (m-code? a-code)
+  (or ((make-letter-code-checker 'M) a-code)
+      ((make-letter-code-checker 'm) a-code)))
+
+;; -------------------- TOKENS
 
 ;; Defines tokens used during lexing. Produces
 ;; functions for creating token structs.
