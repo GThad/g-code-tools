@@ -60,7 +60,7 @@
 (define lex-word
   (lexer [(eof) null]
          [gcode-letter
-          (code (string->symbol lexeme)
+          (code (string->symbol (string-upcase lexeme))
                 (lex-word input-port))]
          [gcode-number (string->number lexeme)]))
 
