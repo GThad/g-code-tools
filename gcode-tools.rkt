@@ -132,4 +132,21 @@
          [whitespace (read-gcode input-port)]
          [gcode-line
           (cons (codes->command (lex-line (open-input-string lexeme)))
-                (import-gcode input-port))]))
+                (read-gcode input-port))]))
+
+;; -------------------- WRITING
+
+;; Consumes a list of command? and writes to the output-port?
+;; specified by out.
+(define (write-gcode commands [out (current-output-port)])
+  (define (write-code a-code)
+    (display (code-letter a-code) out)
+    (display (code-number a-code) out)
+    (display " " out))
+  
+  (define (write-command cmd)
+    (write-code (command-name cmd))
+    (map write-code (command-parameters cmd))
+    (display #\newline out))
+  
+  (map write-command commands))
