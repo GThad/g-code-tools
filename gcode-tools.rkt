@@ -9,7 +9,7 @@
          parser-tools/lex
          (prefix-in re- parser-tools/lex-sre))
 
-;; -------------------- INTERNAL STRUCTURE 
+;; -------------------- G-CODE STRUCTURES
 
 ;; A code represents a single instruction in G-code. For example,
 ;; "G0" and "X25.5" would correspond to (code G 0) and (code X 25.5)
@@ -103,50 +103,3 @@
     (display #\newline out))
   
   (map write-command commands))
-
-;; -------------------- UTILITY FUNCTIONS/MACROS
-
-;; Coerce everything except #f to a boolean.
-(define-syntax-rule (->boolean val)
-  (if val #t #f))
-
-;; Like and but returns #t or #f.
-(define-syntax-rule (and? pred ...)
-  (->boolean (and pred ...)))
-
-;; Like member but returns #t or #f.
-(define-syntax-rule (member? val lst)
-  (->boolean (member val lst)))
-
-;; -------------------- CODE FUNCTIONS
-
-;; Consumes a symbol and returns a function that
-;; consumes a code? and produces true whenever the letter
-;; of the code matches letter.
-(define (make-letter-code-checker letter)
-  (lambda (a-code)
-    (symbol=? letter (code-letter a-code))))
-
-(define (g-code? a-code)
-  (or ((make-letter-code-checker 'G) a-code)
-      ((make-letter-code-checker 'g) a-code)))
-
-(define (m-code? a-code)
-  (or ((make-letter-code-checker 'M) a-code)
-      ((make-letter-code-checker 'm) a-code)))
-
-;; Consumes 2 or more code? and returns #t when they are all
-;; equal?
-(define (code=? . codes)
-  (cond [(> (length codes) 1)
-         (and (equal? (first codes) (second codes))
-              (apply code=? (rest codes)))]
-        [else #t]))
-
-;; Consumes 2 or more code? and returns #t when they are all
-;; have equal? letter.
-(define (code-letter=? . codes)
-  (cond [(> (length codes) 1)
-         (and (symbol=? (code-letter (first codes)) (code-letter (second codes)))
-              (apply code-letter=? (rest codes)))]
-        [else #t]))
