@@ -127,9 +127,9 @@
 
 ;; Consumes an input-port? and produces a list of command? for the
 ;; G-code.
-(define import-gcode
+(define read-gcode
   (lexer [(eof) null]
-         [whitespace (import-gcode input-port)]
+         [whitespace (read-gcode input-port)]
          [gcode-line
           (cons (codes->command (lex-line (open-input-string lexeme)))
                 (import-gcode input-port))]))
