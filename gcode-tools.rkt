@@ -1,10 +1,5 @@
 #lang racket/base
-(require racket/string
-         racket/contract
-         racket/bool
-         racket/function
-         racket/match
-         racket/list
+(require racket/contract
          racket/struct
          parser-tools/lex
          (prefix-in re- parser-tools/lex-sre))
@@ -58,7 +53,7 @@
 
 ;; Consumes a list of code? and produces a command? out of them.
 (define (codes->command codes)
-  (command (first codes) (rest codes)))
+  (command (car codes) (cdr codes)))
 
 ;; Consumes an import-port? and produces a code for the
 ;; G-code word.
