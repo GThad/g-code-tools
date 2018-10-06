@@ -15,6 +15,67 @@
          parser-tools/lex
          (prefix-in re- parser-tools/lex-sre))
 
+(provide
+ (contract-out
+  (struct code ([letter symbol?] [number number?]))
+  (struct command ([name code?] [parameters (listof code?)]))
+  (struct coordinate ([dim-1 code?] [dim-2 code?] [dim-3 code?]))
+
+  (read-gcode (() (input-port?) . ->* . (listof command?)))
+  (write-gcode (((listof command?)) (output-port?) . ->* . void?))
+  
+  (g-code? (code? . -> . boolean?))
+  (m-code? (code? . -> . boolean?))
+  (f-code? (code? . -> . boolean?))
+  (s-code? (code? . -> . boolean?))
+  (x-code? (code? . -> . boolean?))
+  (y-code? (code? . -> . boolean?))
+  (z-code? (code? . -> . boolean?))
+  (i-code? (code? . -> . boolean?))
+  (j-code? (code? . -> . boolean?))
+  (k-code? (code? . -> . boolean?))
+  (code=? (() #:rest code? . ->* . boolean?))
+
+  (x-coord? (coordinate? . -> . boolean?))
+  (y-coord? (coordinate? . -> . boolean?))
+  (z-coord? (coordinate? . -> . boolean?))
+  (xy-coord? (coordinate? . -> . boolean?))
+  (xz-coord? (coordinate? . -> . boolean?))
+  (yz-coord? (coordinate? . -> . boolean?))
+  (xyz-coord? (coordinate? . -> . boolean?))
+  (i-coord? (coordinate? . -> . boolean?))
+  (j-coord? (coordinate? . -> . boolean?))
+  (k-coord? (coordinate? . -> . boolean?))
+  (ij-coord? (coordinate? . -> . boolean?))
+  (ik-coord? (coordinate? . -> . boolean?))
+  (jk-coord? (coordinate? . -> . boolean?))
+  (ijk-coord? (coordinate? . -> . boolean?))
+
+  (parameter? (code? command? . -> . boolean?))
+  (parameter-by-letter (symbol? command? . -> . boolean?))
+  (named? (code? command? . -> . boolean?))
+
+  (g-command? (command? . -> . boolean?))
+  (m-command? (command? . -> . boolean?))
+  (f-command? (command? . -> . boolean?))
+  (s-command? (command? . -> . boolean?))
+  (x-command? (command? . -> . boolean?))
+  (y-command? (command? . -> . boolean?))
+  (z-command? (command? . -> . boolean?))
+  (i-command? (command? . -> . boolean?))
+  (j-command? (command? . -> . boolean?))
+  (k-command? (command? . -> . boolean?))
+
+  (update-name (command? (code? . -> . code?) . -> . command?))
+  (update-parameters (command? ((listof code?) . -> . (listof code?)) . -> . command?))
+  (get-coordinates (command? . -> . (values coordinate? coordinate?)))
+  (update-coordinates (command? (coordinate? . -> . coordinate?) . -> . command?))
+
+  (update-program-names ((listof command?) (code? . -> . code?) . -> . (listof command?)))
+  (update-program-parameters ((listof command?) ((listof code?) . -> . (listof code?)) . -> . (listof command?)))
+  (update-program-coordinates ((listof command?) (coordinate? . -> . coordinate?) . -> . (listof command?)))
+  ))
+
 ;; -------------------- G-CODE STRUCTURES
 
 ;; A code represents a single instruction in G-code. For example,
@@ -94,12 +155,15 @@
 
 ;; Consumes an input-port? and produces a list of command? for the
 ;; G-code.
-(define read-gcode
-  (lexer [(eof) null]
-         [whitespace (read-gcode input-port)]
-         [gcode-line
-          (cons (codes->command (lex-line (open-input-string lexeme)))
-                (read-gcode input-port))]))
+(define (read-gcode [in (current-input-port)])
+  (define lex
+    (lexer [(eof) null]
+           [whitespace (read-gcode input-port)]
+           [gcode-line
+            (cons (codes->command (lex-line (open-input-string lexeme)))
+                  (read-gcode input-port))]))
+
+  (lex in))
 
 ;; -------------------- WRITING
 
@@ -116,7 +180,8 @@
     (map write-code (command-parameters cmd))
     (display #\newline out))
   
-  (map write-command commands))
+  (map write-command commands)
+  (void))
 
 ;; -------------------- UTILITY FUNCTIONS/MACROS
 
