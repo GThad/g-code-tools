@@ -294,3 +294,40 @@
   (command (command-name cmd)
            (updater (command-parameters cmd))))
 
+;; Consumes a command? and produces a list of coordinates. A coordinate
+;; is a list with 1-3 codes depending on the number of dimensions there
+;; are to the coordinate. X,Y,Z codes can be in a coordinate as well as
+;; I,J,K codes.
+(define (get-coordinates cmd)
+  (define xyz-coord (coordinate (parameter-by-letter 'X cmd)
+                                (parameter-by-letter 'Y cmd)
+                                (parameter-by-letter 'Z cmd)))
+  (define ijk-coord (coordinate (parameter-by-letter 'I cmd)
+                                (parameter-by-letter 'J cmd)
+                                (parameter-by-letter 'K cmd)))
+  (values xyz-coord ijk-coord))
+
+;; Consumes a command and an updater, and produces the same command
+;; after applying the updater too the coordinates in the parameters
+;; of the command.
+(define (update-coordinates cmd updater)
+  (define-values (xyz-coord ijk-coord) (get-coordinates cmd))
+  (define xyz-updated-coord (updater xyz-coord))
+  (define ijk-updated-coord (updater ijk-coord))
+  
+  (define dummy-cmd (command (code 'G -1)
+                             (list (coordinate-dim-1 xyz-updated-coord)
+                                   (coordinate-dim-2 xyz-updated-coord)
+                                   (coordinate-dim-2 xyz-updated-coord)
+                                   (coordinate-dim-1 ijk-updated-coord)
+                                   (coordinate-dim-2 ijk-updated-coord)
+                                   (coordinate-dim-3 ijk-updated-coord))))
+  
+  (define (keep/replace param)
+    (define new-param/false (parameter-by-letter (code-letter param) dummy-cmd))
+    (if new-param/false
+        new-param/false
+        param))
+  
+  (command (command-name cmd)
+           (map keep/replace (command-parameters cmd))))
