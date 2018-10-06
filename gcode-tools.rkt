@@ -151,6 +151,104 @@
               (apply code=? (rest codes)))]
         [else #t]))
 
+;; -------------------- COORDINATE FUNCTIONS
+
+;; Consumes a coordinate? and produces #t if the coordinate only
+;; has an x dimension defined.
+(define (x-coord? coord)
+  (and? (coordinate-dim-1 coord)
+        (x-code? (coordinate-dim-1 coord))
+        (not (coordinate-dim-2 coord))
+        (not (coordinate-dim-3 coord))))
+
+(define (y-coord? coord)
+  (and? (coordinate-dim-2 coord)
+        (y-code? (coordinate-dim-2 coord))
+        (not (coordinate-dim-1 coord))
+        (not (coordinate-dim-3 coord))))
+
+(define (z-coord? coord)
+  (and? (coordinate-dim-3 coord)
+        (z-code? (coordinate-dim-3 coord))
+        (not (coordinate-dim-1 coord))
+        (not (coordinate-dim-2 coord))))
+
+(define (xy-coord? coord)
+  (and? (coordinate-dim-1 coord)
+        (coordinate-dim-2 coord)
+        (x-code? (coordinate-dim-1 coord))
+        (y-code? (coordinate-dim-2 coord))
+        (not (coordinate-dim-3 coord))))
+
+(define (xz-coord? coord)
+  (and? (coordinate-dim-1 coord)
+        (coordinate-dim-3 coord)
+        (x-code? (coordinate-dim-1 coord))
+        (z-code? (coordinate-dim-3 coord))
+        (not (coordinate-dim-2 coord))))
+
+(define (yz-coord? coord)
+  (and? (coordinate-dim-2 coord)
+        (coordinate-dim-3 coord)
+        (y-code? (coordinate-dim-2 coord))
+        (z-code? (coordinate-dim-3 coord))
+        (not (coordinate-dim-1 coord))))
+
+(define (xyz-coord? coord)
+  (and? (coordinate-dim-1 coord)
+        (coordinate-dim-2 coord)
+        (coordinate-dim-3 coord)
+        (x-code? (coordinate-dim-1 coord))
+        (y-code? (coordinate-dim-2 coord))
+        (z-code? (coordinate-dim-3 coord))))
+
+(define (i-coord? coord)
+  (and? (coordinate-dim-1 coord)
+        (i-code? (coordinate-dim-1 coord))
+        (not (coordinate-dim-2 coord))
+        (not (coordinate-dim-3 coord))))
+
+(define (j-coord? coord)
+  (and? (coordinate-dim-2 coord)
+        (j-code? (coordinate-dim-2 coord))
+        (not (coordinate-dim-1 coord))
+        (not (coordinate-dim-3 coord))))
+
+(define (k-coord? coord)
+  (and? (coordinate-dim-3 coord)
+        (k-code? (coordinate-dim-3 coord))
+        (not (coordinate-dim-1 coord))
+        (not (coordinate-dim-2 coord))))
+
+(define (ij-coord? coord)
+  (and? (coordinate-dim-1 coord)
+        (coordinate-dim-2 coord)
+        (i-code? (coordinate-dim-1 coord))
+        (j-code? (coordinate-dim-2 coord))
+        (not (coordinate-dim-3 coord))))
+
+(define (ik-coord? coord)
+  (and? (coordinate-dim-1 coord)
+        (coordinate-dim-3 coord)
+        (i-code? (coordinate-dim-1 coord))
+        (k-code? (coordinate-dim-3 coord))
+        (not (coordinate-dim-2 coord))))
+
+(define (jk-coord? coord)
+  (and? (coordinate-dim-2 coord)
+        (coordinate-dim-3 coord)
+        (j-code? (coordinate-dim-2 coord))
+        (k-code? (coordinate-dim-3 coord))
+        (not (coordinate-dim-1 coord))))
+
+(define (ijk-coord? coord)
+  (and? (coordinate-dim-1 coord)
+        (coordinate-dim-2 coord)
+        (coordinate-dim-3 coord)
+        (i-code? (coordinate-dim-1 coord))
+        (j-code? (coordinate-dim-2 coord))
+        (k-code? (coordinate-dim-3 coord))))
+
 ;; -------------------- COMMAND STRUCT FUNCTIONS
 
 ;; Consumes a code? and a command? and produces #t if the code
