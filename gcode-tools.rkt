@@ -1,6 +1,8 @@
 #lang racket/base
 (require racket/contract
          racket/struct
+         racket/bool
+         racket/list
          parser-tools/lex
          (prefix-in re- parser-tools/lex-sre))
 
@@ -32,6 +34,14 @@
      (make-constructor-style-printer
       (lambda (obj) 'command)
       (lambda (obj) (list (command-name obj) (command-parameters obj)))))])
+
+;; A coordinate represents a 3-dimensional coordinate. It is made up of three
+;; codes. The first code is either X,I the second code is either Y,J
+;; and the third code is either Z,K.
+;; Any of the dimensions can also be #f which means the actual dimension is unknown.
+;; In this manner 1 and 2 dimensional coordinates are also supported.
+(struct coordinate (dim-1 dim-2 dim-3)
+  #:transparent)
 
 ;; -------------------- PARSING
 
