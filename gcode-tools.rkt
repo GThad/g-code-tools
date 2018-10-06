@@ -108,3 +108,45 @@
     (display #\newline out))
   
   (map write-command commands))
+
+;; -------------------- UTILITY FUNCTIONS/MACROS
+
+;; Coerce everything except #f to a boolean.
+(define-syntax-rule (->boolean val)
+  (if val #t #f))
+
+;; Like and but returns #t or #f.
+(define-syntax-rule (and? pred ...)
+  (->boolean (and pred ...)))
+
+;; Like member but returns #t or #f.
+(define-syntax-rule (member? val lst)
+  (->boolean (member val lst)))
+
+;; -------------------- CODE STRUCT FUNCTIONS
+
+;; Consumes a string and returns a function that
+;; consumes a code? and produces true whenever the letter
+;; of the code matches letter.
+(define (make-letter-code? letter)  
+  (lambda (a-code)
+    (symbol=? letter (code-letter a-code))))
+
+(define g-code? (make-letter-code? 'G))
+(define m-code? (make-letter-code? 'M))
+(define f-code? (make-letter-code? 'F))
+(define s-code? (make-letter-code? 'S))
+(define x-code? (make-letter-code? 'X))
+(define y-code? (make-letter-code? 'Y))
+(define z-code? (make-letter-code? 'Z))
+(define i-code? (make-letter-code? 'I))
+(define j-code? (make-letter-code? 'J))
+(define k-code? (make-letter-code? 'K))
+
+;; Consumes 2 or more code? and returns #t when they are all
+;; equal?
+(define (code=? . codes)
+  (cond [(> (length codes) 1)
+         (and (equal? (first codes) (second codes))
+              (apply code=? (rest codes)))]
+        [else #t]))
