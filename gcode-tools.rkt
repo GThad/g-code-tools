@@ -331,3 +331,20 @@
   
   (command (command-name cmd)
            (map keep/replace (command-parameters cmd))))
+
+;; -------------------- PROGRAM FUNCTIONS
+;; Consumes a list of commands and an update function,
+;; and produces a the same list of commands after applying the
+;; updater function onto each name code of each command.
+(define (update-program-names cmds updater)
+  (map (lambda (a-cmd) (update-name a-cmd updater))
+       cmds))
+
+;; Like update-command-names but updated parameters instead.
+(define (update-program-parameters cmds updater)
+  (map (lambda (a-cmd) (update-parameters a-cmd updater))
+       cmds))
+
+(define (update-program-coordinates cmds updater)
+  (map (lambda (a-cmd) (update-coordinates a-cmd updater))
+       cmds))
