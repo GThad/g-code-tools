@@ -150,3 +150,49 @@
          (and (equal? (first codes) (second codes))
               (apply code=? (rest codes)))]
         [else #t]))
+
+;; -------------------- COMMAND STRUCT FUNCTIONS
+
+;; Consumes a code? and a command? and produces #t if the code
+;; is a parameter in the command.
+(define (parameter? a-code cmd)
+  (member? a-code (command-parameters cmd)))
+
+;; Consumes a symbol and a command? and produces a code
+;; that matches the given letter. Otherwise it produces #f.
+(define (parameter-by-letter letter cmd)
+  (findf (lambda (a-code) (symbol=? letter (code-letter a-code)))
+        (command-parameters cmd)))
+
+;; Consumes a code? and a command? and produces #t if the code
+;; is the name in the command.
+(define (named? a-code cmd)
+  (code=? a-code (command-name cmd)))
+
+;; Consumes a letter and produces a function that returns #t
+;; if a command has a name with the given letter.
+(define (make-letter-command? letter)
+  (lambda (cmd)
+    (symbol=? letter (code-letter (command-name cmd)))))
+
+(define g-command? (make-letter-command? 'G))
+(define m-command? (make-letter-command? 'M))
+(define f-command? (make-letter-command? 'F))
+(define s-command? (make-letter-command? 'S))
+(define x-command? (make-letter-command? 'X))
+(define y-command? (make-letter-command? 'Y))
+(define z-command? (make-letter-command? 'Z))
+(define i-command? (make-letter-command? 'I))
+(define j-command? (make-letter-command? 'J))
+(define k-command? (make-letter-command? 'K))
+
+;; Update the name of a single command
+(define (update-name cmd updater)
+  (command (updater (command-name cmd))
+           (command-parameters cmd)))
+
+;; Update the parameters of a single command
+(define (update-parameters cmd updater)
+  (command (command-name cmd)
+           (updater (command-parameters cmd))))
+
