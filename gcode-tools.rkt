@@ -127,11 +127,16 @@
           (re-? #\.)
           (re-+ numeric)))
 
+(define-lex-abbrev gcode-comment
+  (re-seq "(" any-string ")"))
+
 (define-lex-abbrev gcode-word
   (re-seq gcode-letter (re-* blank) gcode-number))
 
 (define-lex-abbrev gcode-line
-  (re-+ (re-* blank) gcode-word (re-* blank)))
+  (re-+ (re-* (re-or blank gcode-comment)) gcode-word (re-or blank gcode-comment)))
+
+
 
 ;; Consumes a list of code? and produces a command? out of them.
 (define (codes->command codes)
@@ -151,6 +156,8 @@
 (define lex-line
   (lexer [(eof) null]
          [whitespace (lex-line input-port)]
+         [gcode-comment
+            (lex-line input-port)]
          [gcode-word
           (cons (lex-word (open-input-string lexeme))
                 (lex-line input-port))]))
@@ -161,6 +168,8 @@
   (define lex
     (lexer [(eof) null]
            [whitespace (read-gcode input-port)]
+           [gcode-comment
+            (read-gcode input-port)]
            [gcode-line
             (cons (codes->command (lex-line (open-input-string lexeme)))
                   (read-gcode input-port))]))
