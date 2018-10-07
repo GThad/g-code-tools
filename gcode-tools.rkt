@@ -166,6 +166,7 @@
   (define lex
     (lexer [(eof) null]
            [whitespace (read-gcode input-port)]
+           [#\% (read-gcode input-port)]
            [gcode-comment
             (read-gcode input-port)]
            [gcode-line
