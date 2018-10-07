@@ -395,15 +395,17 @@
   (define ijk-updated-coord (updater ijk-coord))
   
   (define dummy-cmd (command (code 'G -1)
-                             (list (coordinate-dim-1 xyz-updated-coord)
-                                   (coordinate-dim-2 xyz-updated-coord)
-                                   (coordinate-dim-2 xyz-updated-coord)
-                                   (coordinate-dim-1 ijk-updated-coord)
-                                   (coordinate-dim-2 ijk-updated-coord)
-                                   (coordinate-dim-3 ijk-updated-coord))))
+                             (filter-not false?
+                                         (list (coordinate-dim-1 xyz-updated-coord)
+                                               (coordinate-dim-2 xyz-updated-coord)
+                                               (coordinate-dim-3 xyz-updated-coord)
+                                               (coordinate-dim-1 ijk-updated-coord)
+                                               (coordinate-dim-2 ijk-updated-coord)
+                                               (coordinate-dim-3 ijk-updated-coord)))))
   
-  (define (keep/replace param)
-    (define new-param/false (parameter-by-letter (code-letter param) dummy-cmd))
+    (define (keep/replace param)
+    (define new-param/false (parameter-by-letter (code-letter param)
+                                                 dummy-cmd))
     (if new-param/false
         new-param/false
         param))
