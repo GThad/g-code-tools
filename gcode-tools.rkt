@@ -128,15 +128,13 @@
           (re-+ numeric)))
 
 (define-lex-abbrev gcode-comment
-  (re-seq "(" any-string ")"))
+  (re-seq "(" (re-* (char-complement #\newline)) ")"))
 
 (define-lex-abbrev gcode-word
   (re-seq gcode-letter (re-* blank) gcode-number))
 
 (define-lex-abbrev gcode-line
   (re-+ (re-* (re-or blank gcode-comment)) gcode-word (re-or blank gcode-comment)))
-
-
 
 ;; Consumes a list of code? and produces a command? out of them.
 (define (codes->command codes)
