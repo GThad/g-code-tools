@@ -72,13 +72,10 @@
   (j-command? (command? . -> . boolean?))
   (k-command? (command? . -> . boolean?))
 
-  (update-name (command? (code? . -> . code?) . -> . command?))
-  (update-parameters (command? ((listof code?) . -> . (listof code?)) . -> . command?))
   (get-coordinates (command? . -> . (values coordinate? coordinate?)))
   (update-coordinates (command? (coordinate? . -> . coordinate?) . -> . command?))
 
-  (update-program-names ((listof command?) (code? . -> . code?) . -> . (listof command?)))
-  (update-program-parameters ((listof command?) ((listof code?) . -> . (listof code?)) . -> . (listof command?)))
+  (update-commands ((listof command?) (command? . -> . (or/c command? (listof command?))) . -> . (listof command?)))
   (update-program-coordinates ((listof command?) (coordinate? . -> . coordinate?) . -> . (listof command?)))
   ))
 
@@ -376,16 +373,6 @@
 (define p-command? (make-letter-command? 'P))
 (define r-command? (make-letter-command? 'R))
 
-;; Update the name of a single command
-(define (update-name cmd updater)
-  (command (updater (command-name cmd))
-           (command-parameters cmd)))
-
-;; Update the parameters of a single command
-(define (update-parameters cmd updater)
-  (command (command-name cmd)
-           (updater (command-parameters cmd))))
-
 ;; Consumes a command? and produces a list of coordinates. A coordinate
 ;; is a list with 1-3 codes depending on the number of dimensions there
 ;; are to the coordinate. X,Y,Z codes can be in a coordinate as well as
@@ -427,15 +414,9 @@
 ;; -------------------- PROGRAM FUNCTIONS
 ;; Consumes a list of commands and an update function,
 ;; and produces a the same list of commands after applying the
-;; updater function onto each name code of each command.
-(define (update-program-names cmds updater)
-  (map (lambda (a-cmd) (update-name a-cmd updater))
-       cmds))
-
-;; Like update-command-names but updated parameters instead.
-(define (update-program-parameters cmds updater)
-  (map (lambda (a-cmd) (update-parameters a-cmd updater))
-       cmds))
+;; updater function onto each command.
+(define (update-commands cmds updater)
+  (flatten (map updater cmds)))
 
 (define (update-program-coordinates cmds updater)
   (map (lambda (a-cmd) (update-coordinates a-cmd updater))
