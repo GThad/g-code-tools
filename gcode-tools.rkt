@@ -19,7 +19,9 @@
  (contract-out
   (struct code ([letter symbol?] [number number?]))
   (struct command ([name code?] [parameters (listof code?)]))
-  (struct coordinate ([dim-1 code?] [dim-2 code?] [dim-3 code?]))
+  (struct coordinate ([dim-1 (or/c code? #f)]
+                      [dim-2 (or/c code? #f)]
+                      [dim-3 (or/c code? #f)]))
 
   (read-gcode (() (input-port?) . ->* . (listof command?)))
   (write-gcode (((listof command?)) (output-port?) . ->* . void?))
