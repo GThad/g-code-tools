@@ -118,8 +118,8 @@
 ;; -------------------- PARSING
 
 (define-lex-abbrev gcode-letter
-  (re-or #\G #\M #\S #\F #\X #\Y #\Z #\I #\J #\K
-         #\g #\m #\s #\f #\x #\y #\z #\i #\j #\k))
+  (re-or #\G #\M #\S #\F #\R #\P #\X #\Y #\Z #\I #\J #\K
+         #\g #\m #\s #\f #\r #\p #\x #\y #\z #\i #\j #\k))
 
 (define-lex-abbrev gcode-number
   (re-seq (re-? #\- #\+)
@@ -218,6 +218,8 @@
 (define i-code? (make-letter-code? 'I))
 (define j-code? (make-letter-code? 'J))
 (define k-code? (make-letter-code? 'K))
+(define r-code? (make-letter-code? 'R))
+(define p-code? (make-letter-code? 'P))
 
 ;; Consumes 2 or more code? and returns #t when they are all
 ;; equal?
@@ -359,6 +361,8 @@
 (define i-command? (make-letter-command? 'I))
 (define j-command? (make-letter-command? 'J))
 (define k-command? (make-letter-command? 'K))
+(define p-command? (make-letter-command? 'P))
+(define r-command? (make-letter-command? 'R))
 
 ;; Update the name of a single command
 (define (update-name cmd updater)
