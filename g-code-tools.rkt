@@ -128,14 +128,14 @@
   (re-seq gcode-letter (re-* blank) gcode-number))
 
 (define-lex-abbrev gcode-line
-  (re-+ (re-* (re-or blank gcode-comment)) gcode-word (re-or blank gcode-comment)))
+  (re-+ (re-seq (re-* (re-or blank gcode-comment)) gcode-word)))
 
 ;; Consumes a list of code? and produces a command? out of them.
 (define (codes->command codes)
   (command (car codes) (cdr codes)))
 
-;; Consumes an import-port? and produces a code for the
-;; G-code word.
+;; Consumes an import-port?, reads a G-code word and produces
+;; the corresponding code?.
 (define lex-word
   (lexer [(eof) null]
          [gcode-letter
