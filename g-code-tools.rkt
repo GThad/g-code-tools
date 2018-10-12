@@ -208,6 +208,7 @@
   (lambda (a-code)
     (symbol=? letter (code-letter a-code))))
 
+;; Consumes a code and checks if it has the corresponding letter.
 (define g-code? (make-letter-code? 'G))
 (define m-code? (make-letter-code? 'M))
 (define f-code? (make-letter-code? 'F))
@@ -307,6 +308,26 @@
 
 ;; -------------------- COMMAND STRUCT FUNCTIONS
 
+;; Consumes a letter and produces a function that returns #t
+;; if a command has a name with the given letter.
+(define (make-letter-command? letter)
+  (lambda (cmd)
+    (symbol=? letter (code-letter (command-name cmd)))))
+
+;; Consumes a command and checks if its name it has the corresponding letter.
+(define g-command? (make-letter-command? 'G))
+(define m-command? (make-letter-command? 'M))
+(define f-command? (make-letter-command? 'F))
+(define s-command? (make-letter-command? 'S))
+(define x-command? (make-letter-command? 'X))
+(define y-command? (make-letter-command? 'Y))
+(define z-command? (make-letter-command? 'Z))
+(define i-command? (make-letter-command? 'I))
+(define j-command? (make-letter-command? 'J))
+(define k-command? (make-letter-command? 'K))
+(define p-command? (make-letter-command? 'P))
+(define r-command? (make-letter-command? 'R))
+
 ;; Consumes a code? and a command? and produces #t if the code
 ;; is a parameter in the command.
 (define (parameter? a-code cmd)
@@ -322,25 +343,6 @@
 ;; is the name in the command.
 (define (named? a-code cmd)
   (equal? a-code (command-name cmd)))
-
-;; Consumes a letter and produces a function that returns #t
-;; if a command has a name with the given letter.
-(define (make-letter-command? letter)
-  (lambda (cmd)
-    (symbol=? letter (code-letter (command-name cmd)))))
-
-(define g-command? (make-letter-command? 'G))
-(define m-command? (make-letter-command? 'M))
-(define f-command? (make-letter-command? 'F))
-(define s-command? (make-letter-command? 'S))
-(define x-command? (make-letter-command? 'X))
-(define y-command? (make-letter-command? 'Y))
-(define z-command? (make-letter-command? 'Z))
-(define i-command? (make-letter-command? 'I))
-(define j-command? (make-letter-command? 'J))
-(define k-command? (make-letter-command? 'K))
-(define p-command? (make-letter-command? 'P))
-(define r-command? (make-letter-command? 'R))
 
 ;; Consumes a command? and produces a list of coordinates. A coordinate
 ;; is a list with 1-3 codes depending on the number of dimensions there
