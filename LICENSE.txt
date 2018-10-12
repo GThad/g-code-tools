@@ -1,4 +1,4 @@
-gcode-tools
+g-code-tools
 Copyright (c) 2018 gifan
 
 This package is distributed under the GNU Lesser General Public

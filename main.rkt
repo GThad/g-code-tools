@@ -24,8 +24,8 @@
 ;; See the current version of the racket style guide here:
 ;; http://docs.racket-lang.org/style/index.html
 
-(require "gcode-tools.rkt")
-(provide (all-from-out "gcode-tools.rkt"))
+(require "g-code-tools.rkt")
+(provide (all-from-out "g-code-tools.rkt"))
 
 (module+ test
   ;; Tests to be run with raco test
