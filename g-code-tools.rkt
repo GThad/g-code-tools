@@ -36,7 +36,6 @@
   (i-code? (code? . -> . boolean?))
   (j-code? (code? . -> . boolean?))
   (k-code? (code? . -> . boolean?))
-  (code=? (() #:rest code? . ->* . boolean?))
 
   (x-coord? predicate/c)
   (y-coord? predicate/c)
@@ -222,14 +221,6 @@
 (define r-code? (make-letter-code? 'R))
 (define p-code? (make-letter-code? 'P))
 
-;; Consumes 2 or more code? and returns #t when they are all
-;; equal?
-(define (code=? . codes)
-  (cond [(> (length codes) 1)
-         (and (equal? (first codes) (second codes))
-              (apply code=? (rest codes)))]
-        [else #t]))
-
 ;; -------------------- COORDINATE FUNCTIONS
 
 (define x-coord?
@@ -330,7 +321,7 @@
 ;; Consumes a code? and a command? and produces #t if the code
 ;; is the name in the command.
 (define (named? a-code cmd)
-  (code=? a-code (command-name cmd)))
+  (equal? a-code (command-name cmd)))
 
 ;; Consumes a letter and produces a function that returns #t
 ;; if a command has a name with the given letter.
