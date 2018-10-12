@@ -135,8 +135,8 @@
                 (lex-word input-port))]
          [g-code-number (string->number lexeme)]))
 
-;; Consumes an import-port? and produces a list of code for the
-;; G-code line.
+;; Consumes an import-port?, reads a lin of G-code and produces
+;; the corresponding command.
 (define lex-line
   (lexer [(eof) null]
          [whitespace (lex-line input-port)]
@@ -146,8 +146,8 @@
           (cons (lex-word (open-input-string lexeme))
                 (lex-line input-port))]))
 
-;; Consumes an input-port? and produces a list of command? for the
-;; G-code.
+;; Consumes an input-port?, reads tall the G-code and returns
+;; the corresponding list of commands.
 (define (read-g-code [in (current-input-port)])
   (define lex
     (lexer [(eof) null]
@@ -328,7 +328,7 @@
 (define (parameter? a-code cmd)
   (member? a-code (command-parameters cmd)))
 
-;; Consumes a symbol and a command? and produces a code
+;; Consumes a symbol? and a command? and produces a code
 ;; that matches the given letter. Otherwise it produces #f.
 (define (parameter-by-letter letter cmd)
   (findf (lambda (a-code) (symbol=? letter (code-letter a-code)))
