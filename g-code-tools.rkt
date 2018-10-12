@@ -12,6 +12,7 @@
          racket/struct
          racket/bool
          racket/list
+         racket/vector
          parser-tools/lex
          (prefix-in re- parser-tools/lex-sre))
 
@@ -19,9 +20,6 @@
  (contract-out
   (struct code ([letter symbol?] [number number?]))
   (struct command ([name code?] [parameters (listof code?)]))
-  (struct coordinate ([dim-1 (or/c code? #f)]
-                      [dim-2 (or/c code? #f)]
-                      [dim-3 (or/c code? #f)]))
 
   (read-g-code (() (input-port?) . ->* . (listof command?)))
   (write-g-code (((listof command?)) (output-port?) . ->* . void?))
@@ -40,20 +38,21 @@
   (k-code? (code? . -> . boolean?))
   (code=? (() #:rest code? . ->* . boolean?))
 
-  (x-coord? (coordinate? . -> . boolean?))
-  (y-coord? (coordinate? . -> . boolean?))
-  (z-coord? (coordinate? . -> . boolean?))
-  (xy-coord? (coordinate? . -> . boolean?))
-  (xz-coord? (coordinate? . -> . boolean?))
-  (yz-coord? (coordinate? . -> . boolean?))
-  (xyz-coord? (coordinate? . -> . boolean?))
-  (i-coord? (coordinate? . -> . boolean?))
-  (j-coord? (coordinate? . -> . boolean?))
-  (k-coord? (coordinate? . -> . boolean?))
-  (ij-coord? (coordinate? . -> . boolean?))
-  (ik-coord? (coordinate? . -> . boolean?))
-  (jk-coord? (coordinate? . -> . boolean?))
-  (ijk-coord? (coordinate? . -> . boolean?))
+  (x-coord? predicate/c)
+  (y-coord? predicate/c)
+  (z-coord? predicate/c)
+  (xy-coord? predicate/c)
+  (xz-coord? predicate/c)
+  (yz-coord? predicate/c)
+  (xyz-coord? predicate/c)
+  (i-coord? predicate/c)
+  (j-coord? predicate/c)
+  (k-coord? predicate/c)
+  (ij-coord? predicate/c)
+  (ik-coord? predicate/c)
+  (jk-coord? predicate/c)
+  (ijk-coord? predicate/c)
+  (coordinate? predicate/c)
 
   (parameter? (code? command? . -> . boolean?))
   (parameter-by-letter (symbol? command? . -> . boolean?))
@@ -73,10 +72,14 @@
   (k-command? (command? . -> . boolean?))
 
   (get-coordinates (command? . -> . (values coordinate? coordinate?)))
-  (update-coordinates (command? (coordinate? . -> . coordinate?) . -> . command?))
+  (update-coordinates (command? (coordinate? . -> . coordinate?)
+                       . -> . command?))
 
-  (update-commands ((listof command?) (command? . -> . (or/c command? (listof command?))) . -> . (listof command?)))
-  (update-program-coordinates ((listof command?) (coordinate? . -> . coordinate?) . -> . (listof command?)))
+  (update-commands ((listof command?) (command? . -> . (or/c command? (listof command?)))
+                    . -> . (listof command?)))
+  
+  (update-program-coordinates ((listof command?) (coordinate? . -> . coordinate?)
+                               . -> . (listof command?)))
   ))
 
 ;; -------------------- G-CODE STRUCTURES
@@ -189,6 +192,10 @@
 (define-syntax-rule (and? pred ...)
   (->boolean (and pred ...)))
 
+;; Like or but returns #t or #f.
+(define-syntax-rule (or? pred ...)
+  (->boolean (or pred ...)))
+
 ;; Like member but returns #t or #f.
 (define-syntax-rule (member? val lst)
   (->boolean (member val lst)))
@@ -225,101 +232,87 @@
 
 ;; -------------------- COORDINATE FUNCTIONS
 
-;; Consumes a coordinate? and produces #t if the coordinate only
-;; has an x dimension defined.
-(define (x-coord? coord)
-  (and? (coordinate-dim-1 coord)
-        (x-code? (coordinate-dim-1 coord))
-        (not (coordinate-dim-2 coord))
-        (not (coordinate-dim-3 coord))))
+(define x-coord?
+    (vector/c x-code?
+              #:flat? #t))
 
-(define (y-coord? coord)
-  (and? (coordinate-dim-2 coord)
-        (y-code? (coordinate-dim-2 coord))
-        (not (coordinate-dim-1 coord))
-        (not (coordinate-dim-3 coord))))
+(define y-coord?
+    (vector/c y-code?
+              #:flat? #t))
 
-(define (z-coord? coord)
-  (and? (coordinate-dim-3 coord)
-        (z-code? (coordinate-dim-3 coord))
-        (not (coordinate-dim-1 coord))
-        (not (coordinate-dim-2 coord))))
+(define z-coord?
+    (vector/c z-code?
+              #:flat? #t))
 
-(define (xy-coord? coord)
-  (and? (coordinate-dim-1 coord)
-        (coordinate-dim-2 coord)
-        (x-code? (coordinate-dim-1 coord))
-        (y-code? (coordinate-dim-2 coord))
-        (not (coordinate-dim-3 coord))))
+(define xy-coord?
+    (vector/c x-code?
+              y-code?
+              #:flat? #t))
 
-(define (xz-coord? coord)
-  (and? (coordinate-dim-1 coord)
-        (coordinate-dim-3 coord)
-        (x-code? (coordinate-dim-1 coord))
-        (z-code? (coordinate-dim-3 coord))
-        (not (coordinate-dim-2 coord))))
+(define xz-coord?
+    (vector/c x-code?
+              z-code?
+              #:flat? #t))
 
-(define (yz-coord? coord)
-  (and? (coordinate-dim-2 coord)
-        (coordinate-dim-3 coord)
-        (y-code? (coordinate-dim-2 coord))
-        (z-code? (coordinate-dim-3 coord))
-        (not (coordinate-dim-1 coord))))
+(define yz-coord?
+    (vector/c y-code?
+              z-code?
+              #:flat? #t))
 
-(define (xyz-coord? coord)
-  (and? (coordinate-dim-1 coord)
-        (coordinate-dim-2 coord)
-        (coordinate-dim-3 coord)
-        (x-code? (coordinate-dim-1 coord))
-        (y-code? (coordinate-dim-2 coord))
-        (z-code? (coordinate-dim-3 coord))))
+(define xyz-coord?
+    (vector/c x-code?
+              y-code?
+              z-code?
+              #:flat? #t))
 
-(define (i-coord? coord)
-  (and? (coordinate-dim-1 coord)
-        (i-code? (coordinate-dim-1 coord))
-        (not (coordinate-dim-2 coord))
-        (not (coordinate-dim-3 coord))))
+(define i-coord?
+    (vector/c i-code?
+              #:flat? #t))
 
-(define (j-coord? coord)
-  (and? (coordinate-dim-2 coord)
-        (j-code? (coordinate-dim-2 coord))
-        (not (coordinate-dim-1 coord))
-        (not (coordinate-dim-3 coord))))
+(define j-coord?
+    (vector/c j-code?
+              #:flat? #t))
 
-(define (k-coord? coord)
-  (and? (coordinate-dim-3 coord)
-        (k-code? (coordinate-dim-3 coord))
-        (not (coordinate-dim-1 coord))
-        (not (coordinate-dim-2 coord))))
+(define k-coord?
+    (vector/c k-code?
+              #:flat? #t))
 
-(define (ij-coord? coord)
-  (and? (coordinate-dim-1 coord)
-        (coordinate-dim-2 coord)
-        (i-code? (coordinate-dim-1 coord))
-        (j-code? (coordinate-dim-2 coord))
-        (not (coordinate-dim-3 coord))))
+(define ij-coord?
+    (vector/c i-code?
+              j-code?
+              #:flat? #t))
 
-(define (ik-coord? coord)
-  (and? (coordinate-dim-1 coord)
-        (coordinate-dim-3 coord)
-        (i-code? (coordinate-dim-1 coord))
-        (k-code? (coordinate-dim-3 coord))
-        (not (coordinate-dim-2 coord))))
+(define ik-coord?
+    (vector/c i-code?
+              k-code?
+              #:flat? #t))
 
-(define (jk-coord? coord)
-  (and? (coordinate-dim-2 coord)
-        (coordinate-dim-3 coord)
-        (j-code? (coordinate-dim-2 coord))
-        (k-code? (coordinate-dim-3 coord))
-        (not (coordinate-dim-1 coord))))
+(define jk-coord?
+    (vector/c j-code?
+              k-code?
+              #:flat? #t))
 
-(define (ijk-coord? coord)
-  (and? (coordinate-dim-1 coord)
-        (coordinate-dim-2 coord)
-        (coordinate-dim-3 coord)
-        (i-code? (coordinate-dim-1 coord))
-        (j-code? (coordinate-dim-2 coord))
-        (k-code? (coordinate-dim-3 coord))))
+(define ijk-coord?
+    (vector/c i-code?
+              j-code?
+              k-code?
+              #:flat? #t))
+
+(define coordinate?
+  (or/c x-coord?
+        y-coord?
+        z-coord?
+        xy-coord?
+        xz-coord?
+        yz-coord?
+        xyz-coord?
+        i-coord?
+        j-coord?
+        k-coord?
+        ij-coord?
+        ik-coord?
+        jk-coord?
+        ijk-coord?))
 
 ;; -------------------- COMMAND STRUCT FUNCTIONS
 
@@ -363,12 +356,14 @@
 ;; are to the coordinate. X,Y,Z codes can be in a coordinate as well as
 ;; I,J,K codes.
 (define (get-coordinates cmd)
-  (define xyz-coord (coordinate (parameter-by-letter 'X cmd)
-                                (parameter-by-letter 'Y cmd)
-                                (parameter-by-letter 'Z cmd)))
-  (define ijk-coord (coordinate (parameter-by-letter 'I cmd)
-                                (parameter-by-letter 'J cmd)
-                                (parameter-by-letter 'K cmd)))
+  (define x (parameter-by-letter 'X cmd))
+  (define y (parameter-by-letter 'Y cmd))
+  (define z (parameter-by-letter 'Z cmd))
+  (define i (parameter-by-letter 'I cmd))
+  (define j (parameter-by-letter 'J cmd))
+  (define k (parameter-by-letter 'K cmd))
+  (define xyz-coord (vector-filter-not false? (vector x y z)))
+  (define ijk-coord (vector-filter-not false? (vector i j k)))
   (values xyz-coord ijk-coord))
 
 ;; Consumes a command and an updater, and produces the same command
@@ -376,17 +371,16 @@
 ;; of the command.
 (define (update-coordinates cmd updater)
   (define-values (xyz-coord ijk-coord) (get-coordinates cmd))
-  (define xyz-updated-coord (updater xyz-coord))
-  (define ijk-updated-coord (updater ijk-coord))
+  (define xyz-updated-coord (if (not (equal? #() xyz-coord))
+                                (updater xyz-coord)
+                                #()))
+  (define ijk-updated-coord (if (not (equal? #() ijk-coord))
+                                (updater ijk-coord)
+                                #()))
   
   (define dummy-cmd (command (code 'G -1)
-                             (filter-not false?
-                                         (list (coordinate-dim-1 xyz-updated-coord)
-                                               (coordinate-dim-2 xyz-updated-coord)
-                                               (coordinate-dim-3 xyz-updated-coord)
-                                               (coordinate-dim-1 ijk-updated-coord)
-                                               (coordinate-dim-2 ijk-updated-coord)
-                                               (coordinate-dim-3 ijk-updated-coord)))))
+                             (append (vector->list xyz-updated-coord)
+                                     (vector->list ijk-updated-coord))))
   
     (define (keep/replace param)
     (define new-param/false (parameter-by-letter (code-letter param)
