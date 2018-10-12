@@ -55,6 +55,7 @@ we provide reflect this.
  (code 'Hello 16)
  )
 }
+
 @defstruct[command ([name code?] [parameters (listof code?)])]{
  Represents a single G-code command.
 
@@ -66,5 +67,9 @@ we provide reflect this.
  (command (code 'G 4) (list (code 'P 1000)))
  ;; S255
  (command (code 'S 255))
+ ;; G0 X100 Y100 G1 X0 Y0 is okay, but it won't pass
+ ;; the validator either!
+ (command (code 'G 0) (list (code 'X 100) (code 'Y 100)
+                            (code 'G 0) (code 'X 0) (code 'Y 0)))
  )
 }
