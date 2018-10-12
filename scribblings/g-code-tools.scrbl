@@ -42,6 +42,10 @@ we provide reflect this.
 
 @defstruct[code ([letter symbol?] [number number?])]{
  Represents a single G-code code.
+
+ Note that the letter can be any symbol, but other functions consuming codes
+ will assume that the letter is an uppercase symbol. We will later restrict the
+ values this structure can take.
  
  @#reader scribble/comment-reader
  (racketblock
@@ -116,4 +120,36 @@ we provide reflect this.
 
 @section{Code and Command Checking}
 
-@defproc
+@defproc*[#:kind "procedures"
+          ([(g-code? [a-code code?]) boolean?]
+           [(m-code? [a-code code?]) boolean?]
+           [(f-code? [a-code code?]) boolean?]
+           [(s-code? [a-code code?]) boolean?]
+           [(r-code? [a-code code?]) boolean?]
+           [(p-code? [a-code code?]) boolean?]
+           [(x-code? [a-code code?]) boolean?]
+           [(y-code? [a-code code?]) boolean?]
+           [(z-code? [a-code code?]) boolean?]
+           [(i-code? [a-code code?]) boolean?]
+           [(j-code? [a-code code?]) boolean?]
+           [(k-code? [a-code code?]) boolean?])]{
+ Consumes a code and produces @racket[#t] if the code has the corresponding
+ letter in the letter component.
+}
+
+@defproc*[#:kind "procedures"
+          ([(g-command? [a-command command?]) boolean?]
+           [(m-command? [a-command command?]) boolean?]
+           [(f-command? [a-command command?]) boolean?]
+           [(s-command? [a-command command?]) boolean?]
+           [(r-command? [a-command command?]) boolean?]
+           [(p-command? [a-command command?]) boolean?]
+           [(x-command? [a-command command?]) boolean?]
+           [(y-command? [a-command command?]) boolean?]
+           [(z-command? [a-command command?]) boolean?]
+           [(i-command? [a-command command?]) boolean?]
+           [(j-command? [a-command command?]) boolean?]
+           [(k-command? [a-command command?]) boolean?])]{
+ Consumes a command and produces @racket[#t] if the command has a code with
+ the corresponding letter in the name component of the command.
+}
