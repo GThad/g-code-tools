@@ -88,6 +88,7 @@
 ;; number: number?
 (struct code (letter number)
   #:transparent
+  #:extra-constructor-name make-code
   #:methods gen:custom-write
   [(define write-proc
      (make-constructor-style-printer
@@ -102,6 +103,7 @@
 ;; parameters (listof code?)
 (struct command (name parameters)
   #:transparent
+  #:extra-constructor-name make-command
   #:methods gen:custom-write
   [(define write-proc
      (make-constructor-style-printer
