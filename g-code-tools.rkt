@@ -5,7 +5,7 @@
 ;; 1. A representation of G-code as structures.
 ;; 2. Functions for parsing G-code into the internal structure.
 ;; 3. Functions for writing the internal structure to G-code.
-;; 4. Low-level regarding the internal structure.
+;; 4. Low-level functions regarding the internal structure.
 ;; 5. Higher-level functions regarding the G-code program.
 
 (require racket/contract
