@@ -81,11 +81,7 @@
 
 ;; -------------------- G-CODE STRUCTURES
 
-;; A code represents a single instruction in G-code. For example,
-;; "G0" and "X25.5" would correspond to (code G 0) and (code X 25.5)
-;;
-;; letter: symbol?
-;; number: number?
+;; A code represents a single instruction in G-code.
 (struct code (letter number)
   #:transparent
   #:extra-constructor-name make-code
@@ -95,12 +91,7 @@
       (lambda (obj) 'code)
       (lambda (obj) (list (code-letter obj) (code-number obj)))))])
 
-;; A command represents a group of instructions in G-code corresponding to some single action.
-;; For example, "G0 X25.5 Y30" would correspond to
-;; (command (code G 0) '((code X 25.5) (code Y 30)))
-;;
-;; name: code?
-;; parameters (listof code?)
+;; A command represents a line of G-code, which is a grouping of codes.
 (struct command (name parameters)
   #:transparent
   #:extra-constructor-name make-command
