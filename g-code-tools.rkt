@@ -23,8 +23,8 @@
                       [dim-2 (or/c code? #f)]
                       [dim-3 (or/c code? #f)]))
 
-  (read-gcode (() (input-port?) . ->* . (listof command?)))
-  (write-gcode (((listof command?)) (output-port?) . ->* . void?))
+  (read-g-code (() (input-port?) . ->* . (listof command?)))
+  (write-g-code (((listof command?)) (output-port?) . ->* . void?))
   
   (g-code? (code? . -> . boolean?))
   (m-code? (code? . -> . boolean?))
@@ -101,34 +101,26 @@
       (lambda (obj) 'command)
       (lambda (obj) (list (command-name obj) (command-parameters obj)))))])
 
-;; A coordinate represents a 3-dimensional coordinate. It is made up of three
-;; codes. The first code is either X,I the second code is either Y,J
-;; and the third code is either Z,K.
-;; Any of the dimensions can also be #f which means the actual dimension is unknown.
-;; In this manner 1 and 2 dimensional coordinates are also supported.
-(struct coordinate (dim-1 dim-2 dim-3)
-  #:transparent)
-
 ;; -------------------- PARSING
 
-(define-lex-abbrev gcode-letter
+(define-lex-abbrev g-code-letter
   (re-or #\G #\M #\S #\F #\R #\P #\X #\Y #\Z #\I #\J #\K
          #\g #\m #\s #\f #\r #\p #\x #\y #\z #\i #\j #\k))
 
-(define-lex-abbrev gcode-number
+(define-lex-abbrev g-code-number
   (re-seq (re-? #\- #\+)
           (re-* numeric)
           (re-? #\.)
           (re-+ numeric)))
 
-(define-lex-abbrev gcode-comment
+(define-lex-abbrev g-code-comment
   (re-seq "(" (re-* (char-complement #\newline)) ")"))
 
-(define-lex-abbrev gcode-word
-  (re-seq gcode-letter (re-* blank) gcode-number))
+(define-lex-abbrev g-code-word
+  (re-seq g-code-letter (re-* blank) g-code-number))
 
-(define-lex-abbrev gcode-line
-  (re-+ (re-seq (re-* (re-or blank gcode-comment)) gcode-word)))
+(define-lex-abbrev g-code-line
+  (re-+ (re-seq (re-* (re-or blank g-code-comment)) g-code-word)))
 
 ;; Consumes a list of code? and produces a command? out of them.
 (define (codes->command codes)
@@ -138,34 +130,34 @@
 ;; the corresponding code?.
 (define lex-word
   (lexer [(eof) null]
-         [gcode-letter
+         [g-code-letter
           (code (string->symbol (string-upcase lexeme))
                 (lex-word input-port))]
-         [gcode-number (string->number lexeme)]))
+         [g-code-number (string->number lexeme)]))
 
 ;; Consumes an import-port? and produces a list of code for the
 ;; G-code line.
 (define lex-line
   (lexer [(eof) null]
          [whitespace (lex-line input-port)]
-         [gcode-comment
+         [g-code-comment
             (lex-line input-port)]
-         [gcode-word
+         [g-code-word
           (cons (lex-word (open-input-string lexeme))
                 (lex-line input-port))]))
 
 ;; Consumes an input-port? and produces a list of command? for the
 ;; G-code.
-(define (read-gcode [in (current-input-port)])
+(define (read-g-code [in (current-input-port)])
   (define lex
     (lexer [(eof) null]
-           [whitespace (read-gcode input-port)]
-           [#\% (read-gcode input-port)]
-           [gcode-comment
-            (read-gcode input-port)]
-           [gcode-line
+           [whitespace (read-g-code input-port)]
+           [#\% (read-g-code input-port)]
+           [g-code-comment
+            (read-g-code input-port)]
+           [g-code-line
             (cons (codes->command (lex-line (open-input-string lexeme)))
-                  (read-gcode input-port))]))
+                  (read-g-code input-port))]))
 
   (lex in))
 
@@ -173,7 +165,7 @@
 
 ;; Consumes a list of command? and writes to the output-port?
 ;; specified by out.
-(define (write-gcode commands [out (current-output-port)])
+(define (write-g-code commands [out (current-output-port)])
   (define (write-code a-code)
     (display (code-letter a-code) out)
     (display (code-number a-code) out)
