@@ -53,7 +53,7 @@
   (ijk-coord? predicate/c)
   (coordinate? predicate/c)
 
-  (parameter? (code? command? . -> . boolean?))
+  (parameter-in-command? (code? command? . -> . boolean?))
   (parameter-by-letter (symbol? command? . -> . boolean?))
   (named? (code? command? . -> . boolean?))
 
@@ -330,7 +330,7 @@
 
 ;; Consumes a code? and a command? and produces #t if the code
 ;; is a parameter in the command.
-(define (parameter? a-code cmd)
+(define (parameter-in-command? a-code cmd)
   (member? a-code (command-parameters cmd)))
 
 ;; Consumes a symbol? and a command? and produces a code
