@@ -1,5 +1,5 @@
 #lang scribble/manual
-@require[@for-label[g-code-tools]]
+@require[@for-label[g-code-tools racket/base racket/contract]]
 
 @title{G-code Tools}
 @author{Gifan Thadathil}
@@ -118,7 +118,7 @@ we provide reflect this.
  ]
 }
 
-@section{Code and Command Checking}
+@section{Code and Command Functions}
 
 @defproc*[#:kind "procedures"
           ([(g-code? [a-code code?]) boolean?]
@@ -134,7 +134,7 @@ we provide reflect this.
            [(j-code? [a-code code?]) boolean?]
            [(k-code? [a-code code?]) boolean?])]{
  Consumes a code and produces @racket[#t] if the code has the corresponding
- letter in the letter component.
+ letter in the letter component. Otherwise, it produces @racket[#f].
 }
 
 @defproc*[#:kind "procedures"
@@ -151,5 +151,31 @@ we provide reflect this.
            [(j-command? [a-command command?]) boolean?]
            [(k-command? [a-command command?]) boolean?])]{
  Consumes a command and produces @racket[#t] if the command has a code with
- the corresponding letter in the name component of the command.
+ the corresponding letter in the name component of the command. Otherwise, it produces
+ @racket[#f].
 }
+
+@defproc[(named? [a-code code?] [a-command command?])
+         (or/c code? #f)]{
+ Consumes a code and a command, and produces @racket[#t] if the command's name is
+ equal to the given code. Otherwise, it produces @racket[#f].
+}
+
+@defproc[(parameter-in-command? [a-code code?] [a-command command?])
+         boolean?]{
+ Consumes a code and a command, and produces @racket[#t] if the code is part of the
+ command's parameters. Otherwise, it produces @racket[#f].
+}
+
+@defproc[(parameter-by-letter [letter symbol?] [a-command command?])
+         (or/c code? #f)]{
+ Consumes a symbol and a command. If the given command has a parameter with the
+ given letter, then it produces that code object. Otherwise, it produces @racket[#f].
+}
+
+@section{Coordinates}
+Some commands operate on coordinates, which are specified with a certain group of
+codes. For example "G0 X20 Y20 Z20" tells the machine to move quickly to coordinate
+(20, 20, 20). The X, Y, and Z codes specify the coordinate here. We provide functions
+for making it easier to work with coordinates.
+
