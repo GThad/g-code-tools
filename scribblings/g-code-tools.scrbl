@@ -218,7 +218,8 @@ depending on the number of dimensions. Each element should be an X, Y, Z, I, J, 
 @defproc[(coordinate? [val any]) boolean?]{
  Equivalent to
  @racketblock[
- (or (x-coord? val)
+ (or (equal? #() val)
+     (x-coord? val)
      (y-coord? val)
      (z-coord? val)
      (xy-coord? val)
@@ -232,4 +233,39 @@ depending on the number of dimensions. Each element should be an X, Y, Z, I, J, 
      (ijk-coord? val))
  ]
  but coerces the result to a boolean.
+}
+
+@defproc[(get-coordinates [command command?]) (values coordinate? coordinate?)]{
+ Consumes a command and returns two coordinates. The first coordinate contains
+ any X, Y, and Z codes in the given command. The second coordinate contains any
+ I, J, and K codes in the given command. If a command does not contain the code, it will
+ not be included in the resulting vector.
+}
+
+@defproc[(update-coordinates [command command?] [updater (-> coordinate? coordinate?)])
+         command?]{
+ Consumes a command and an updater function. Produces the same command with updated
+ coordinate codes. Essentially the coordinate codes are gathered with
+ @racket[(get-coordinates command)], and the updater is applied to each coordinate.
+ The codes in the resulting coordinate replace the old ones in the given command.
+}
+
+@section{Program Functions}
+
+@defproc[(update-commands [commands (listof command?)]
+                          [updater (-> command? (or/c command? null (listof command?)))])
+         (listof command?)]{
+ Equivalent to @racket[(flatten (map updater commands))]. By using @racket[flatten], we can
+ easily add additional functionality over a typical map. If the updater produces
+ @racket[null], then command given to it will be removed. If the updater produces
+ a command, then the given command will be replaced with a single command. If the updater
+ produces a list of commands, then the given command will be replaced with all the
+ commands in the list.
+}
+
+@defproc[(update-program-coordinates [commands (listof command?)]
+                                     [updater (-> coordinate? coordinate?)])
+         (listof command?)]{
+ Equivalent to
+ @racketblock[(map (lambda (a-cmd) (update-coordinates a-cmd updater)) commands)]
 }

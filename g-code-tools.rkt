@@ -315,7 +315,6 @@
   (lambda (cmd)
     (symbol=? letter (code-letter (command-name cmd)))))
 
-;; Consumes a command and checks if its name it has the corresponding letter.
 (define g-command? (make-letter-command? 'G))
 (define m-command? (make-letter-command? 'M))
 (define f-command? (make-letter-command? 'F))
@@ -345,10 +344,7 @@
 (define (named? a-code cmd)
   (equal? a-code (command-name cmd)))
 
-;; Consumes a command? and produces a list of coordinates. A coordinate
-;; is a list with 1-3 codes depending on the number of dimensions there
-;; are to the coordinate. X,Y,Z codes can be in a coordinate as well as
-;; I,J,K codes.
+;; Consumes a command? and produces a list of coordinates.
 (define (get-coordinates cmd)
   (define x (parameter-by-letter 'X cmd))
   (define y (parameter-by-letter 'Y cmd))
@@ -361,7 +357,7 @@
   (values xyz-coord ijk-coord))
 
 ;; Consumes a command and an updater, and produces the same command
-;; after applying the updater too the coordinates in the parameters
+;; after applying the updater to the coordinates
 ;; of the command.
 (define (update-coordinates cmd updater)
   (define-values (xyz-coord ijk-coord) (get-coordinates cmd))
@@ -393,6 +389,9 @@
 (define (update-commands cmds updater)
   (flatten (map updater cmds)))
 
+;; Consumes a list of commands and an update function.
+;; Produces the same commands after applying the updater
+;; to coordinates of each command.
 (define (update-program-coordinates cmds updater)
   (map (lambda (a-cmd) (update-coordinates a-cmd updater))
        cmds))
