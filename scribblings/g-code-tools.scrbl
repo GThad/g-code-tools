@@ -286,4 +286,5 @@ any of them will be done, but we will try. Anyone is free to send a pull request
  @item{Tool-path simulations.}
  @item{Sorting functions for minimizing non-work movement.}
  @item{G-code to pict conversion.}
+ @item{Multi-threaded functions.}
  ]
