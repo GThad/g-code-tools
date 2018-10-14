@@ -7,36 +7,37 @@
 @defmodule[g-code-tools]
 
 G-code is a low-level numerical control language. It interfaces between
-software and hardware in Computerized Numerical Control (CNC) machines.
+software and hardware in @hyperlink["https://en.wikipedia.org/wiki/Numerical_control"]{Computerized Numerical Control} (CNC) machines.
 The @racketmodname[g-code-tools] module provides a structure for G-code as well as
 reading and writing functions. Furthermore, it provides a handful of functions
 for manipulating G-code.
 
-The ad hoc nature of G-code is the very reason for this library. G-code is often machine
-specific. Not every machine will interpret the same G-code in the same way. Not every
-machine will support every defined command in G-code. Some machines don't make use
-of a Cartesian coordinate space --- not to mention there are multiple competing
-standards for G-code. There is no guarantee an existing G-code generator will produce
-G-code that works for your machine.
+The ad hoc nature of G-code motivates this library's existence. G-code is often machine
+specific. Not every machine will interpret commands in the same way, and not every
+machine will mechanically support every defined command in G-code. One of the author's machines
+didn't use the Cartesian coordinate system G-code assumes --- not to mention there are multiple
+competing standards for G-code. Since many CNC machines make use of automatically generated
+G-code, it is likely the generated G-code will not work for your machine.
 
-This library provides tools for programmatically modifying G-code. You can use
+This package provides tools for programmatically modifying G-code. You can use
 it to create programs that convert generated G-code into machine-specific G-code.
 
 Note:
 
 @itemize[
  @item{
-  @racketmodname[g-code-tools] is intended for use with G-code generated with another program. It
-  provides only limited support for manual G-coders.
+  @racketmodname[g-code-tools] is intended for use with G-code generated with another program.
+  It provides only limited support for manual G-coders.
  }
  @item{
-  We follow the LinuxCNC standard.
+  We follow the @hyperlink["http://www.linuxcnc.org/docs/html/gcode/g-code.html"]{LinuxCNC}
+  standard.
  }
  ]
 
 @section{G-code Structures}
-A G-code program is made up of codes that are organized into lines. Codes
-can specify commands for the machine or can act as parameters for other commands.
+A G-code program consists of codes organized into lines. Codes
+specify commands for a machine or act as parameters for other commands.
 In any case, a proper G-code program will only have one command per line. The structures
 we provide reflect this.
 
@@ -44,8 +45,7 @@ we provide reflect this.
  Represents a single G-code code.
 
  Note that the letter can be any symbol, but other functions consuming codes
- will assume that the letter is an uppercase symbol. We will later restrict the
- values this structure can take.
+ will assume that the letter is an uppercase symbol.
  
  @#reader scribble/comment-reader
  (racketblock
@@ -84,7 +84,7 @@ we provide reflect this.
          (listof command?)]{
  Reads in a G-code program from the given input port. If no input port
  is given, then the current input port is used. This functions reads the
- program into a list of commands where the ith line in the program corresponds
+ program into a list of commands where the ith line of the program corresponds
  to the ith command in the list.
 
  Note that this function does not yet provide useful error messages on
@@ -98,7 +98,7 @@ we provide reflect this.
  Writes a list of commands as a G-code program to the given output
  port. If no output port is given, then the current output port is used.
 
- Each command gets written to its own line. Furthermore, this
+ Each command is written to a new line. Also this
  function does not do anything complicated; it is possible
  that the written G-code is not executable! We've noticed the following problems:
 
@@ -108,9 +108,9 @@ we provide reflect this.
    arise if you are using semantically valid G-code though.}
  @item{Numbers can be in the wrong form. It writes
    numbers as Racket usually does. However, Racket does not always write numbers
-   correctly for G-code. For example Racket writes long decimal values in
+   correctly for G-code. For example, Racket writes long decimal values in
    scientific notation (@racket[1.0234123E24]). G-code does not support
-   scientific notation. Furthermore, G-code does not allow long decimals either.
+   scientific notation.
 
    A workaround is to round all inexact numbers to a small number (2-5) of decimal
    points, depending on the accuracy of your machine. In this case, Racket will always
@@ -176,10 +176,8 @@ we provide reflect this.
 @section{Coordinates}
 Some commands operate on coordinates, which are specified with a certain group of
 codes. For example "G0 X20 Y20 Z20" tells the machine to move quickly to coordinate
-(20, 20, 20). The X, Y, and Z codes specify the coordinate here. We provide functions
-for making it easier to work with coordinates.
-
-A coordinate itself is given by a @racket[vector] with one, two, or three elements
+(20, 20, 20). The X, Y, and Z codes specify the coordinate here. Within Racket, a coordinate
+is a @racket[vector] with one, two, or three elements
 depending on the number of dimensions. Each element should be an X, Y, Z, I, J, or K code.
 
 @defproc*[#:kind "procedures"
@@ -232,7 +230,7 @@ depending on the number of dimensions. Each element should be an X, Y, Z, I, J, 
      (ik-coord? val)
      (ijk-coord? val))
  ]
- but coerces the result to a boolean.
+ but the result is converted to a boolean.
 }
 
 @defproc[(get-coordinates [command command?]) (values coordinate? coordinate?)]{
@@ -245,9 +243,9 @@ depending on the number of dimensions. Each element should be an X, Y, Z, I, J, 
 @defproc[(update-coordinates [command command?] [updater (-> coordinate? coordinate?)])
          command?]{
  Consumes a command and an updater function. Produces the same command with updated
- coordinate codes. Essentially the coordinate codes are gathered with
+ coordinate codes. The coordinate codes are gathered with
  @racket[(get-coordinates command)], and the updater is applied to each coordinate.
- The codes in the resulting coordinate replace the old ones in the given command.
+ The codes in the resulting coordinate replace the old ones in the original command.
 }
 
 @section{Program Functions}
@@ -256,9 +254,9 @@ depending on the number of dimensions. Each element should be an X, Y, Z, I, J, 
                           [updater (-> command? (or/c command? null (listof command?)))])
          (listof command?)]{
  Equivalent to @racket[(flatten (map updater commands))]. By using @racket[flatten], we can
- easily add additional functionality over a typical map. If the updater produces
- @racket[null], then command given to it will be removed. If the updater produces
- a command, then the given command will be replaced with a single command. If the updater
+ easily add functionality over a typical map. If the updater produces
+ @racket[null], then the command given to it will be removed. If the updater produces
+ a command, then the given command will be replaced the new one. If the updater
  produces a list of commands, then the given command will be replaced with all the
  commands in the list.
 }
