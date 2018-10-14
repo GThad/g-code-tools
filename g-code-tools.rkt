@@ -291,7 +291,8 @@
               #:flat? #t))
 
 (define coordinate?
-  (or/c x-coord?
+  (or/c (vector/c #:flat? #t)
+        x-coord?
         y-coord?
         z-coord?
         xy-coord?
