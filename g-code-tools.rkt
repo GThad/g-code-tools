@@ -74,7 +74,7 @@
   (update-coordinates (command? (coordinate? . -> . coordinate?)
                        . -> . command?))
 
-  (update-commands ((listof command?) (command? . -> . (or/c command? (listof command?)))
+  (update-commands ((listof command?) (command? . -> . (or/c command? null (listof command?)))
                     . -> . (listof command?)))
   
   (update-program-coordinates ((listof command?) (coordinate? . -> . coordinate?)
