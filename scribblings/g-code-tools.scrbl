@@ -179,3 +179,57 @@ codes. For example "G0 X20 Y20 Z20" tells the machine to move quickly to coordin
 (20, 20, 20). The X, Y, and Z codes specify the coordinate here. We provide functions
 for making it easier to work with coordinates.
 
+A coordinate itself is given by a @racket[vector] with one, two, or three elements
+depending on the number of dimensions. Each element should be an X, Y, Z, I, J, or K code.
+
+@defproc*[#:kind "procedures"
+          ([(x-coord? [val any]) boolean?]
+           [(y-coord? [val any]) boolean?]
+           [(z-coord? [val any]) boolean?]
+           [(xy-coord? [val any]) boolean?]
+           [(xz-coord? [val any]) boolean?]
+           [(xyz-coord? [val any]) boolean?]
+           [(i-coord? [val any]) boolean?]
+           [(j-coord? [val any]) boolean?]
+           [(k-coord? [val any]) boolean?]
+           [(ij-coord? [val any]) boolean?]
+           [(ik-coord? [val any]) boolean?]
+           [(ijk-coord? [val any]) boolean?])]{
+ Consumes anything and produces @racket[#t] if the given argument is a vector
+ in the correct form. The number of codes in the vector should match the number
+ of expected dimensions, and the order of the codes should be canonical. The following
+ examples better explain this.
+
+ @racketinput[(x-coord? #((code 'X 20)))]
+ @racketresultblock[#t]
+ @racketinput[(x-coord? #((code 'Y 20)))]
+ @racketresultblock[#f]
+ @racketinput[(x-coord? #((code 'X 20) (code 'Y 20)))]
+ @racketresultblock[#f]
+ 
+ @racketinput[(xy-coord? #((code 'X 20) (code 'Y 20)))]
+ @racketresultblock[#t]
+ @racketinput[(xy-coord? #((code 'X 20)))]
+ @racketresultblock[#f]
+ @racketinput[(xy-coord? #((code 'Y 20) (code 'X 20)))]
+ @racketresultblock[#f]
+}
+
+@defproc[(coordinate? [val any]) boolean?]{
+ Equivalent to
+ @racketblock[
+ (or (x-coord? val)
+     (y-coord? val)
+     (z-coord? val)
+     (xy-coord? val)
+     (xz-coord? val)
+     (xyz-coord? val)
+     (i-coord? val)
+     (j-coord? val)
+     (k-coord? val)
+     (ij-coord? val)
+     (ik-coord? val)
+     (ijk-coord? val))
+ ]
+ but coerces the result to a boolean.
+}
