@@ -7,7 +7,9 @@
 @defmodule[g-code-tools]
 
 G-code is a low-level numerical control language. It interfaces between
-software and hardware in @hyperlink["https://en.wikipedia.org/wiki/Numerical_control"]{Computerized Numerical Control} (CNC) machines.
+software and hardware in
+@hyperlink["https://en.wikipedia.org/wiki/Numerical_control"]{Computerized Numerical Control}
+(CNC) machines.
 The @racketmodname[g-code-tools] module provides a structure for G-code as well as
 reading and writing functions. Furthermore, it provides a handful of functions
 for manipulating G-code.
@@ -267,3 +269,21 @@ depending on the number of dimensions. Each element should be an X, Y, Z, I, J, 
  Equivalent to
  @racketblock[(map (lambda (a-cmd) (update-coordinates a-cmd updater)) commands)]
 }
+
+@section{Possible New Features}
+The following lists (in no particular order) new functionality/changes that are planned. We do not guarantee
+any of them will be done, but we will try. Anyone is free to send a pull request!
+
+@itemize[
+ @item{Stronger restrictions on contracts.}
+ @item{Proper parsing errors.}
+ @item{Ensuring writing always produces valid G-code.}
+ @item{Better support for more codes. For example, a function for changing all F codes, which
+ represent feed rates.}
+ @item{Support for semi-colon comments appearing at the end of lines.}
+ @item{Semantic validation of G-code. This means ensuring multiple commands aren't on the same
+ line, checking for proper parameters to commands, etc.}
+ @item{Tool-path simulations.}
+ @item{Sorting functions for minimizing non-work movement.}
+ @item{G-code to pict conversion.}
+ ]
