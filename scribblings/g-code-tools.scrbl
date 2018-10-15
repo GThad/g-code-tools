@@ -100,7 +100,7 @@ we provide reflect this.
  invalid input will be successfully read in.
 }
 
-@defproc[(write-g-code [commands (listof command?)]
+@defproc[(write-g-code [cmds (listof command?)]
                        [out output-port? (current-output-port)])
          void?]{
  Writes a list of commands as a G-code program to @racket[out].
@@ -132,55 +132,55 @@ we provide reflect this.
 @section{Code and Command Functions}
 
 @defproc*[#:kind "procedures"
-          ([(g-code? [a-code code?]) boolean?]
-           [(m-code? [a-code code?]) boolean?]
-           [(f-code? [a-code code?]) boolean?]
-           [(s-code? [a-code code?]) boolean?]
-           [(r-code? [a-code code?]) boolean?]
-           [(p-code? [a-code code?]) boolean?]
-           [(x-code? [a-code code?]) boolean?]
-           [(y-code? [a-code code?]) boolean?]
-           [(z-code? [a-code code?]) boolean?]
-           [(i-code? [a-code code?]) boolean?]
-           [(j-code? [a-code code?]) boolean?]
-           [(k-code? [a-code code?]) boolean?])]{
- Consumes a code and produces @racket[#t] if @racket[(code-sym a-code)] matches the
+          ([(g-code? [cd code?]) boolean?]
+           [(m-code? [cd code?]) boolean?]
+           [(f-code? [cd code?]) boolean?]
+           [(s-code? [cd code?]) boolean?]
+           [(r-code? [cd code?]) boolean?]
+           [(p-code? [cd code?]) boolean?]
+           [(x-code? [cd code?]) boolean?]
+           [(y-code? [cd code?]) boolean?]
+           [(z-code? [cd code?]) boolean?]
+           [(i-code? [cd code?]) boolean?]
+           [(j-code? [cd code?]) boolean?]
+           [(k-code? [cd code?]) boolean?])]{
+ Consumes a code and produces @racket[#t] if @racket[(code-sym cd)] matches the
  expected symbol. Produces @racket[#f] otherwise.
 }
 
 @defproc*[#:kind "procedures"
-          ([(g-command? [a-command command?]) boolean?]
-           [(m-command? [a-command command?]) boolean?]
-           [(f-command? [a-command command?]) boolean?]
-           [(s-command? [a-command command?]) boolean?]
-           [(r-command? [a-command command?]) boolean?]
-           [(p-command? [a-command command?]) boolean?]
-           [(x-command? [a-command command?]) boolean?]
-           [(y-command? [a-command command?]) boolean?]
-           [(z-command? [a-command command?]) boolean?]
-           [(i-command? [a-command command?]) boolean?]
-           [(j-command? [a-command command?]) boolean?]
-           [(k-command? [a-command command?]) boolean?])]{
- Consumes a command and produces @racket[#t] if @racket[(code-sym (command-name a-command))]
+          ([(g-command? [cmd command?]) boolean?]
+           [(m-command? [cmd command?]) boolean?]
+           [(f-command? [cmd command?]) boolean?]
+           [(s-command? [cmd command?]) boolean?]
+           [(r-command? [cmd command?]) boolean?]
+           [(p-command? [cmd command?]) boolean?]
+           [(x-command? [cmd command?]) boolean?]
+           [(y-command? [cmd command?]) boolean?]
+           [(z-command? [cmd command?]) boolean?]
+           [(i-command? [cmd command?]) boolean?]
+           [(j-command? [cmd command?]) boolean?]
+           [(k-command? [cmd command?]) boolean?])]{
+ Consumes a command and produces @racket[#t] if @racket[(code-sym (command-name cmd))]
  matches the expected symbol. Produces @racket[#f] otherwise.
 }
 
-@defproc[(named? [a-code code?] [a-command command?])
+@defproc[(named? [cd code?] [cmd command?])
          (or/c code? #f)]{
- Consumes a code and a command. Produces @racket[#t] if @racket[(command-name a-command)]
- equals @racket[a-code]. Produces @racket[#f] otherwise.
+ Consumes a code and a command. Produces @racket[#t] if @racket[(command-name cmd)]
+ equals @racket[cd]. Produces @racket[#f] otherwise.
 }
 
-@defproc[(param-in-command? [a-code code?] [a-command command?])
+@defproc[(param-in-command? [cd code?] [cmd command?])
          boolean?]{
- Consumes a code and a command, and produces @racket[#t] if @racket[a-code] is a member
- of @racket[(command-params a-command)]. Produces @racket[#f] otherwise.
+ Consumes a code and a command, and produces @racket[#t] if @racket[cd] is a member
+ of @racket[(command-params cmd)]. Produces @racket[#f] otherwise.
 }
 
-@defproc[(param-by-sym [sym g-code-sym?] [a-command command?])
+@defproc[(param-by-sym [sym g-code-sym?] [cmd command?])
          (or/c code? #f)]{
- Consumes a symbol and a command. If @racket[(command-params a-command)] has a member
- @racket[a-code] such that @racket[(code-sym a-code)] matches @racket[sym], then @racket[a-code]
+ Consumes a symbol and a command. If @racket[(command-params cmd)] has a member
+ @racket[cd] such that @racket[(code-sym cd)] matches @racket[sym], then @racket[cd]
  is produced. Produces @racket[#f] otherwise.
 }
 
@@ -249,38 +249,38 @@ depending on the number of dimensions. Each element should be an X, Y, Z, I, J, 
  where the result is converted to a boolean.
 }
 
-@defproc[(get-coords [command command?]) (values coord? coord?)]{
+@defproc[(get-coords [cmd command?]) (values coord? coord?)]{
  Consumes a command and returns two coordinates. The first coordinate contains
- any X, Y, and Z codes in @racket[(command-params command)]. The second coordinate contains any
- I, J, and K codes in @racket[(command-params command)]. If a command does not contain
+ any X, Y, and Z codes in @racket[(command-params cmd)]. The second coordinate contains any
+ I, J, and K codes in @racket[(command-params cmd)]. If a command does not contain
  a code, the code will not be included in the resulting vector.
 }
 
-@defproc[(update-coords [command command?] [updater (-> coord? coord?)])
+@defproc[(update-coords [cmd command?] [updater (-> coord? coord?)])
          command?]{
  Consumes a command and an updater function. Produces the same command with updated
  coordinate codes. The coordinate codes are gathered with
- @racket[(get-coords command)], and @racket[updater] is applied to each coordinate.
- The codes in the resulting coordinates replace the old ones in @racket[command].
+ @racket[(get-coords cmd)], and @racket[updater] is applied to each coordinate.
+ The codes in the resulting coordinates replace the old ones in @racket[cmd].
 }
 
 @section{Program Functions}
 
-@defproc[(update-commands [commands (listof command?)]
+@defproc[(update-commands [cmds (listof command?)]
                           [updater (-> command? (or/c null command? (listof command?)))])
          (listof command?)]{
- Equivalent to @racket[(flatten (map updater commands))]. By using @racket[flatten], we
+ Equivalent to @racket[(flatten (map updater cmds))]. By using @racket[flatten], we
  easily add functionality over a typical map. If @racket[updater] produces
  @racket[null], we do a remove command operation. If it produces a command, we do a replace
  command operation. If it produces a list of commands, we do a replace command with many commands
  operation.
 }
 
-@defproc[(update-program-coords [commands (listof command?)]
+@defproc[(update-program-coords [cmds (listof command?)]
                                 [updater (-> coord? coord?)])
          (listof command?)]{
  Equivalent to
- @racketblock[(map (lambda (a-cmd) (update-coords a-cmd updater)) commands)]
+ @racketblock[(map (lambda (a-cmd) (update-coords a-cmd updater)) cmds)]
 }
 
 @section{Possible New Features}
