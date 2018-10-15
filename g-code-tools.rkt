@@ -20,7 +20,7 @@
  (contract-out
   (g-code-sym? (any/c . -> . boolean?))
   
-  (struct code ([sym g-code-sym?] [number number?]))
+  (struct code ([sym g-code-sym?] [num number?]))
   (struct command ([name code?] [params (listof code?)]))
 
   (read-g-code (() (input-port?) . ->* . (listof command?)))
@@ -101,14 +101,14 @@
             'X 'Y 'Z 'I 'J 'K))
 
 ;; A code represents a single instruction in G-code.
-(struct code (sym number)
+(struct code (sym num)
   #:transparent
   #:extra-constructor-name make-code
   #:methods gen:custom-write
   [(define write-proc
      (make-constructor-style-printer
       (lambda (obj) 'code)
-      (lambda (obj) (list (code-sym obj) (code-number obj)))))])
+      (lambda (obj) (list (code-sym obj) (code-num obj)))))])
 
 ;; A command represents a line of G-code, which is a grouping of codes.
 (struct command (name params)
@@ -126,7 +126,7 @@
   (re-or #\G #\M #\S #\F #\R #\P #\X #\Y #\Z #\I #\J #\K
          #\g #\m #\s #\f #\r #\p #\x #\y #\z #\i #\j #\k))
 
-(define-lex-abbrev g-code-number
+(define-lex-abbrev g-code-num
   (re-seq (re-? #\- #\+)
           (re-* numeric)
           (re-? #\.)
@@ -136,7 +136,7 @@
   (re-seq "(" (re-* (char-complement #\newline)) ")"))
 
 (define-lex-abbrev g-code-word
-  (re-seq g-code-sym (re-* blank) g-code-number))
+  (re-seq g-code-sym (re-* blank) g-code-num))
 
 (define-lex-abbrev g-code-line
   (re-+ (re-seq (re-* (re-or blank g-code-comment)) g-code-word)))
@@ -152,7 +152,7 @@
          [g-code-sym
           (code (string->symbol (string-upcase lexeme))
                 (lex-word input-port))]
-         [g-code-number (string->number lexeme)]))
+         [g-code-num (string->number lexeme)]))
 
 ;; Consumes an import-port?, reads a lin of G-code and produces
 ;; the corresponding command.
@@ -187,7 +187,7 @@
 (define (write-g-code commands [out (current-output-port)])
   (define (write-code a-code)
     (display (code-sym a-code) out)
-    (display (code-number a-code) out)
+    (display (code-num a-code) out)
     (display " " out))
   
   (define (write-command cmd)

@@ -50,7 +50,7 @@ we provide reflect this.
  Produces @racket[#f] otherwise.
 }
 
-@defstruct[code ([sym g-code-sym?] [number number?])]{
+@defstruct[code ([sym g-code-sym?] [num number?])]{
  Represents a single G-code code.
  
  @#reader scribble/comment-reader
