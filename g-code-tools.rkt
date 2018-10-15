@@ -18,7 +18,9 @@
 
 (provide
  (contract-out
-  (struct code ([letter symbol?] [number number?]))
+  (g-code-letter? (any/c . -> . boolean?))
+  
+  (struct code ([letter g-code-letter?] [number number?]))
   (struct command ([name code?] [parameters (listof code?)]))
 
   (read-g-code (() (input-port?) . ->* . (listof command?)))
@@ -82,6 +84,12 @@
   ))
 
 ;; -------------------- G-CODE STRUCTURES
+
+;; Consumes anything and returns whether it is
+;; a G-code letter symbol.
+(define g-code-letter?
+  (one-of/c 'G 'M 'F 'S 'R 'P
+            'X 'Y 'Z 'I 'J 'K))
 
 ;; A code represents a single instruction in G-code.
 (struct code (letter number)

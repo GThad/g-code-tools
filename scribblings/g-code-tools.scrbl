@@ -43,11 +43,15 @@ specify commands for a machine or act as parameters for other commands.
 In any case, a proper G-code program will only have one command per line. The structures
 we provide reflect this.
 
-@defstruct[code ([letter symbol?] [number number?])]{
- Represents a single G-code code.
+@defproc[(g-code-letter? [val any/c]) boolean?]{
+ Consumes anything and produces @racket[#t] if @racket[val] is any of
+ @racket['G], @racket['M], @racket['F], @racket['S], @racket['P], @racket['R],
+ @racket['X], @racket['Y], @racket['Z], @racket['I], @racket['J], or @racket['K]. Otherwise
+ produces @racket[#f].
+}
 
- Note that the letter can be any symbol, but other functions consuming codes
- will assume that the letter is an uppercase symbol.
+@defstruct[code ([letter g-code-letter?] [number number?])]{
+ Represents a single G-code code.
  
  @#reader scribble/comment-reader
  (racketblock
@@ -57,8 +61,10 @@ we provide reflect this.
  (code 'X 150.574)
  ;; F500
  (code 'F 500)
- ;; Hello16 is okay, but it won't pass the validator!
+ ;; Throws exn:fail
  (code 'Hello 16)
+ ;; Throws exn:fail
+ (code 'g 16)
  )
 }
 
@@ -73,8 +79,7 @@ we provide reflect this.
  (command (code 'G 4) (list (code 'P 1000)))
  ;; S255
  (command (code 'S 255))
- ;; G0 X100 Y100 G1 X0 Y0 is okay, but it won't pass
- ;; the validator either!
+ ;; G0 X100 Y100 G1 X0 Y0 is okay, but it is invalid G-code.
  (command (code 'G 0) (list (code 'X 100) (code 'Y 100)
                             (code 'G 0) (code 'X 0) (code 'Y 0)))
  )
