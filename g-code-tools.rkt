@@ -72,15 +72,23 @@
   (j-command? (command? . -> . boolean?))
   (k-command? (command? . -> . boolean?))
 
-  (get-coordinates (command? . -> . (values coordinate? coordinate?)))
+  (get-coordinates (command?
+                    . -> .
+                    (values coordinate? coordinate?)))
+  
   (update-coordinates (command? (coordinate? . -> . coordinate?)
-                       . -> . command?))
+                       . -> .
+                       command?))
 
-  (update-commands ((listof command?) (command? . -> . (or/c command? null (listof command?)))
-                    . -> . (listof command?)))
+  (update-commands ((listof command?) (command?
+                                       . -> .
+                                       (or/c command? null (listof command?)))
+                    . -> .
+                    (listof command?)))
   
   (update-program-coordinates ((listof command?) (coordinate? . -> . coordinate?)
-                               . -> . (listof command?)))
+                               . -> .
+                               (listof command?)))
   ))
 
 ;; -------------------- G-CODE STRUCTURES
