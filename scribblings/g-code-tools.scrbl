@@ -229,7 +229,7 @@ depending on the number of dimensions. Each element should be an X, Y, Z, I, J, 
  @racketresultblock[#f]
 }
 
-@defproc[(coordinate? [val any/c]) boolean?]{
+@defproc[(coord? [val any/c]) boolean?]{
  Equivalent to
  @racketblock[
  (or (empty-coord? val)
@@ -249,18 +249,18 @@ depending on the number of dimensions. Each element should be an X, Y, Z, I, J, 
  where the result is converted to a boolean.
 }
 
-@defproc[(get-coordinates [command command?]) (values coordinate? coordinate?)]{
+@defproc[(get-coords [command command?]) (values coord? coord?)]{
  Consumes a command and returns two coordinates. The first coordinate contains
  any X, Y, and Z codes in @racket[(command-params command)]. The second coordinate contains any
  I, J, and K codes in @racket[(command-params command)]. If a command does not contain
  a code, the code will not be included in the resulting vector.
 }
 
-@defproc[(update-coordinates [command command?] [updater (-> coordinate? coordinate?)])
+@defproc[(update-coords [command command?] [updater (-> coord? coord?)])
          command?]{
  Consumes a command and an updater function. Produces the same command with updated
  coordinate codes. The coordinate codes are gathered with
- @racket[(get-coordinates command)], and @racket[updater] is applied to each coordinate.
+ @racket[(get-coords command)], and @racket[updater] is applied to each coordinate.
  The codes in the resulting coordinates replace the old ones in @racket[command].
 }
 
@@ -276,11 +276,11 @@ depending on the number of dimensions. Each element should be an X, Y, Z, I, J, 
  operation.
 }
 
-@defproc[(update-program-coordinates [commands (listof command?)]
-                                     [updater (-> coordinate? coordinate?)])
+@defproc[(update-program-coords [commands (listof command?)]
+                                     [updater (-> coord? coord?)])
          (listof command?)]{
  Equivalent to
- @racketblock[(map (lambda (a-cmd) (update-coordinates a-cmd updater)) commands)]
+ @racketblock[(map (lambda (a-cmd) (update-coords a-cmd updater)) commands)]
 }
 
 @section{Possible New Features}

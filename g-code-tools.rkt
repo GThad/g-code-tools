@@ -54,7 +54,7 @@
   (ik-coord? (vector? . -> . boolean?))
   (jk-coord? (vector? . -> . boolean?))
   (ijk-coord? (vector? . -> . boolean?))
-  (coordinate? predicate/c)
+  (coord? predicate/c)
 
   (param-in-command? (code? command? . -> . boolean?))
   (param-by-sym (g-code-sym? command? . -> . boolean?))
@@ -73,11 +73,11 @@
   (j-command? (command? . -> . boolean?))
   (k-command? (command? . -> . boolean?))
 
-  (get-coordinates (command?
+  (get-coords (command?
                     . -> .
-                    (values coordinate? coordinate?)))
+                    (values coord? coord?)))
   
-  (update-coordinates (command? (coordinate? . -> . coordinate?)
+  (update-coords (command? (coord? . -> . coord?)
                        . -> .
                        command?))
 
@@ -87,7 +87,7 @@
                     . -> .
                     (listof command?)))
   
-  (update-program-coordinates ((listof command?) (coordinate? . -> . coordinate?)
+  (update-program-coords ((listof command?) (coord? . -> . coord?)
                                . -> .
                                (listof command?)))
   ))
@@ -310,7 +310,7 @@
               k-code?
               #:flat? #t))
 
-(define coordinate?
+(define coord?
   (or/c empty-coord?
         x-coord?
         y-coord?
@@ -365,7 +365,7 @@
   (equal? a-code (command-name cmd)))
 
 ;; Consumes a command? and produces a list of coordinates.
-(define (get-coordinates cmd)
+(define (get-coords cmd)
   (define x (param-by-sym 'X cmd))
   (define y (param-by-sym 'Y cmd))
   (define z (param-by-sym 'Z cmd))
@@ -379,8 +379,8 @@
 ;; Consumes a command and an updater, and produces the same command
 ;; after applying the updater to the coordinates
 ;; of the command.
-(define (update-coordinates cmd updater)
-  (define-values (xyz-coord ijk-coord) (get-coordinates cmd))
+(define (update-coords cmd updater)
+  (define-values (xyz-coord ijk-coord) (get-coords cmd))
   (define xyz-updated-coord (if (not (equal? #() xyz-coord))
                                 (updater xyz-coord)
                                 #()))
@@ -412,6 +412,6 @@
 ;; Consumes a list of commands and an update function.
 ;; Produces the same commands after applying the updater
 ;; to coordinates of each command.
-(define (update-program-coordinates cmds updater)
-  (map (lambda (a-cmd) (update-coordinates a-cmd updater))
+(define (update-program-coords cmds updater)
+  (map (lambda (a-cmd) (update-coords a-cmd updater))
        cmds))
