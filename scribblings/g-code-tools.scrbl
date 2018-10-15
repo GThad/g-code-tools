@@ -26,14 +26,14 @@ it to create programs that convert generated G-code into machine-specific G-code
 
 Note:
 
-@itemize[
+@itemlist[
  @item{
   @racketmodname[g-code-tools] is intended for use with G-code generated with another program.
   It provides only limited support for manual G-coders.
  }
  @item{
   We follow the @hyperlink["http://www.linuxcnc.org/docs/html/gcode/g-code.html"]{LinuxCNC}
-  standard.
+  standard for parsing and validation, but ensure contracts place looser restrictions.
  }
  ]
 
@@ -46,8 +46,8 @@ we provide reflect this.
 @defproc[(g-code-letter? [val any/c]) boolean?]{
  Consumes anything and produces @racket[#t] if @racket[val] is any of
  @racket['G], @racket['M], @racket['F], @racket['S], @racket['P], @racket['R],
- @racket['X], @racket['Y], @racket['Z], @racket['I], @racket['J], or @racket['K]. Otherwise
- produces @racket[#f].
+ @racket['X], @racket['Y], @racket['Z], @racket['I], @racket['J], or @racket['K].
+ Produces @racket[#f] otherwise.
 }
 
 @defstruct[code ([letter g-code-letter?] [number number?])]{
@@ -68,7 +68,7 @@ we provide reflect this.
  )
 }
 
-@defstruct[command ([name code?] [parameters (listof code?)])]{
+@defstruct[command ([name code?] [params (listof code?)])]{
  Represents a single G-code command.
 
  @#reader scribble/comment-reader
@@ -79,7 +79,8 @@ we provide reflect this.
  (command (code 'G 4) (list (code 'P 1000)))
  ;; S255
  (command (code 'S 255))
- ;; G0 X100 Y100 G1 X0 Y0 is okay, but it is invalid G-code.
+ ;; G0 X100 Y100 G1 X0 Y0 is okay, but it is invalid G-code since
+ ;; there are 2 actual commands.
  (command (code 'G 0) (list (code 'X 100) (code 'Y 100)
                             (code 'G 0) (code 'X 0) (code 'Y 0)))
  )
@@ -89,12 +90,12 @@ we provide reflect this.
 
 @defproc[(read-g-code (in input-port? (current-input-port)))
          (listof command?)]{
- Reads in a G-code program from the given input port. If no input port
- is given, then the current input port is used. This functions reads the
- program into a list of commands where the ith line of the program corresponds
+ Reads in a G-code program from @racket[in]. If @racket[in] is not specified,
+ then the current input port is used. Produces a list of commands
+ where the ith line of the program corresponds
  to the ith command in the list.
 
- Note that this function does not yet provide useful error messages on
+ Note that we do not yet provide useful error messages on
  @emph{syntactically} malformed input! Furthermore, @emph{semantically}
  invalid input will be successfully read in.
 }
@@ -102,27 +103,30 @@ we provide reflect this.
 @defproc[(write-g-code [commands (listof command?)]
                        [out output-port? (current-output-port)])
          void?]{
- Writes a list of commands as a G-code program to the given output
- port. If no output port is given, then the current output port is used.
+ Writes a list of commands as a G-code program to @racket[out].
+ If @racket[out] is not specified, then the current output port is used.
 
- Each command is written to a new line. Also this
- function does not do anything complicated; it is possible
- that the written G-code is not executable! We've noticed the following problems:
+ As for style, each command is written to a new line, and that is all.
+ No comments or anything else is added to minimize file sizes.
+ In addition, it is possible that the written G-code is syntactically malformed! We've
+ noticed the following problems:
 
- @itemize[
+ @itemlist[
  @item{Written lines can be more than 256 characters (the maximum
-   defined by G-code) if the command is unusually large. This problem should never
-   arise if you are using semantically valid G-code though.}
- @item{Numbers can be in the wrong form. It writes
-   numbers as Racket usually does. However, Racket does not always write numbers
+   defined by G-code) if the command is unusually large. This problem should rarely
+   arise if you are using semantically valid G-code, and keep numbers relatively small.}
+ @item{Numbers can be in the wrong form. Numbers are written as Racket usually writes them.
+   However, Racket does not always write numbers
    correctly for G-code. For example, Racket writes long decimal values in
    scientific notation (@racket[1.0234123E24]). G-code does not support
    scientific notation.
 
    A workaround is to round all inexact numbers to a small number (2-5) of decimal
-   points, depending on the accuracy of your machine. In this case, Racket will always
+   points, depending on the accuracy of your machine. In this case, Racket should
    write the numbers correctly.}
- ]
+ #:style 'ordered]
+
+ These issues will be fixed in the future.
 }
 
 @section{Code and Command Functions}
@@ -140,8 +144,8 @@ we provide reflect this.
            [(i-code? [a-code code?]) boolean?]
            [(j-code? [a-code code?]) boolean?]
            [(k-code? [a-code code?]) boolean?])]{
- Consumes a code and produces @racket[#t] if the code has the corresponding
- letter in the letter component. Otherwise, it produces @racket[#f].
+ Consumes a code and produces @racket[#t] if @racket[(code-letter a-code)] matches the
+ expected letter. Produces @racket[#f] otherwise.
 }
 
 @defproc*[#:kind "procedures"
@@ -157,33 +161,33 @@ we provide reflect this.
            [(i-command? [a-command command?]) boolean?]
            [(j-command? [a-command command?]) boolean?]
            [(k-command? [a-command command?]) boolean?])]{
- Consumes a command and produces @racket[#t] if the command has a code with
- the corresponding letter in the name component of the command. Otherwise, it produces
- @racket[#f].
+ Consumes a command and produces @racket[#t] if @racket[(code-letter (command-name a-command))]
+ matches the expected letter. Produces @racket[#f] otherwise.
 }
 
 @defproc[(named? [a-code code?] [a-command command?])
          (or/c code? #f)]{
- Consumes a code and a command, and produces @racket[#t] if the command's name is
- equal to the given code. Otherwise, it produces @racket[#f].
+ Consumes a code and a command. Produces @racket[#t] if @racket[(command-name a-command)]
+ equals @racket[a-code]. Produces @racket[#f] otherwise.
 }
 
-@defproc[(parameter-in-command? [a-code code?] [a-command command?])
+@defproc[(param-in-command? [a-code code?] [a-command command?])
          boolean?]{
- Consumes a code and a command, and produces @racket[#t] if the code is part of the
- command's parameters. Otherwise, it produces @racket[#f].
+ Consumes a code and a command, and produces @racket[#t] if @racket[a-code] is a member
+ of @racket[(command-params a-command)]. Produces @racket[#f] otherwise.
 }
 
-@defproc[(parameter-by-letter [letter symbol?] [a-command command?])
+@defproc[(param-by-letter [letter g-code-letter?] [a-command command?])
          (or/c code? #f)]{
- Consumes a symbol and a command. If the given command has a parameter with the
- given letter, then it produces that code object. Otherwise, it produces @racket[#f].
+ Consumes a symbol and a command. If @racket[(command-params a-command)] has a member
+ @racket[a-code] such that @racket[(code-letter a-code)] matches @racket[letter], then @racket[a-code]
+ is produced. Produces @racket[#f] otherwise.
 }
 
 @section{Coordinates}
 Some commands operate on coordinates, which are specified with a certain group of
 codes. For example "G0 X20 Y20 Z20" tells the machine to move quickly to coordinate
-(20, 20, 20). The X, Y, and Z codes specify the coordinate here. Within Racket, a coordinate
+(20, 20, 20). The X, Y, and Z codes together specify the coordinate. Within Racket, a coordinate
 is a @racket[vector] with one, two, or three elements
 depending on the number of dimensions. Each element should be an X, Y, Z, I, J, or K code.
 
@@ -201,10 +205,14 @@ depending on the number of dimensions. Each element should be an X, Y, Z, I, J, 
            [(ij-coord? [vec vector?]) boolean?]
            [(ik-coord? [vec vector?]) boolean?]
            [(ijk-coord? [vec vector?]) boolean?])]{
- Consumes anything and produces @racket[#t] if the given argument is a vector
- in the correct form. The number of codes in the vector should match the number
- of expected dimensions, and the order of the codes should be canonical. The following
- examples better explain this.
+ Consumes anything and produces @racket[#t] if @racket[vec] is in the correct form:
+ @itemlist[
+ @item{Only codes should be in @racket[vec].}
+ @item{The number of codes should match the expected number of dimensions.}
+ @item{The order of codes should be canonical. For example X,Y,Z is canonical, but Y,X,Z is not.}
+ #:style 'ordered]
+
+ Examples may explain this more clearly.
 
  @racketinput[(x-coord? #((code 'X 20)))]
  @racketresultblock[#t]
@@ -221,7 +229,7 @@ depending on the number of dimensions. Each element should be an X, Y, Z, I, J, 
  @racketresultblock[#f]
 }
 
-@defproc[(coordinate? [val any]) boolean?]{
+@defproc[(coordinate? [val any/c]) boolean?]{
  Equivalent to
  @racketblock[
  (or (empty-coord? val)
@@ -243,30 +251,29 @@ depending on the number of dimensions. Each element should be an X, Y, Z, I, J, 
 
 @defproc[(get-coordinates [command command?]) (values coordinate? coordinate?)]{
  Consumes a command and returns two coordinates. The first coordinate contains
- any X, Y, and Z codes in the given command. The second coordinate contains any
- I, J, and K codes in the given command. If a command does not contain the code, it will
- not be included in the resulting vector.
+ any X, Y, and Z codes in @racket[(command-params command)]. The second coordinate contains any
+ I, J, and K codes in @racket[(command-params command)]. If a command does not contain
+ a code, the code will not be included in the resulting vector.
 }
 
 @defproc[(update-coordinates [command command?] [updater (-> coordinate? coordinate?)])
          command?]{
  Consumes a command and an updater function. Produces the same command with updated
  coordinate codes. The coordinate codes are gathered with
- @racket[(get-coordinates command)], and the updater is applied to each coordinate.
- The codes in the resulting coordinate replace the old ones in the original command.
+ @racket[(get-coordinates command)], and @racket[updater] is applied to each coordinate.
+ The codes in the resulting coordinates replace the old ones in @racket[command].
 }
 
 @section{Program Functions}
 
 @defproc[(update-commands [commands (listof command?)]
-                          [updater (-> command? (or/c command? null (listof command?)))])
+                          [updater (-> command? (or/c null command? (listof command?)))])
          (listof command?)]{
- Equivalent to @racket[(flatten (map updater commands))]. By using @racket[flatten], we can
- easily add functionality over a typical map. If the updater produces
- @racket[null], then the command given to it will be removed. If the updater produces
- a command, then the given command will be replaced the new one. If the updater
- produces a list of commands, then the given command will be replaced with all the
- commands in the list.
+ Equivalent to @racket[(flatten (map updater commands))]. By using @racket[flatten], we
+ easily add functionality over a typical map. If @racket[updater] produces
+ @racket[null], we do a remove command operation. If it produces a command, we do a replace
+ command operation. If it produces a list of commands, we do a replace command with many commands
+ operation.
 }
 
 @defproc[(update-program-coordinates [commands (listof command?)]
@@ -277,10 +284,10 @@ depending on the number of dimensions. Each element should be an X, Y, Z, I, J, 
 }
 
 @section{Possible New Features}
-The following lists (in no particular order) new functionality/changes that are planned. We do not guarantee
-any of them will be done, but we will try. Anyone is free to send a pull request!
+The following lists (in no particular order) new functionality/changes that are planned.
+We make no guarantees, but we will try. Anyone is free to send a pull request!
 
-@itemize[
+@itemlist[
  @item{Stronger restrictions on contracts.}
  @item{Proper parsing errors.}
  @item{Ensuring writing always produces valid G-code.}
@@ -297,8 +304,8 @@ any of them will be done, but we will try. Anyone is free to send a pull request
 
 @section{Changelog}
 
-@itemize[
+@itemlist[
  @item{@bold{0.1 --- 2018-10-15}
-  @itemize[@item{First release.}]
+  @itemlist[@item{First release.}]
  }
  ]

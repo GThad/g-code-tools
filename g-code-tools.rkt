@@ -21,7 +21,7 @@
   (g-code-letter? (any/c . -> . boolean?))
   
   (struct code ([letter g-code-letter?] [number number?]))
-  (struct command ([name code?] [parameters (listof code?)]))
+  (struct command ([name code?] [params (listof code?)]))
 
   (read-g-code (() (input-port?) . ->* . (listof command?)))
   (write-g-code (((listof command?)) (output-port?) . ->* . void?))
@@ -56,8 +56,8 @@
   (ijk-coord? (vector? . -> . boolean?))
   (coordinate? predicate/c)
 
-  (parameter-in-command? (code? command? . -> . boolean?))
-  (parameter-by-letter (g-code-letter? command? . -> . boolean?))
+  (param-in-command? (code? command? . -> . boolean?))
+  (param-by-letter (g-code-letter? command? . -> . boolean?))
   (named? (code? command? . -> . boolean?))
 
   (g-command? (command? . -> . boolean?))
@@ -111,14 +111,14 @@
       (lambda (obj) (list (code-letter obj) (code-number obj)))))])
 
 ;; A command represents a line of G-code, which is a grouping of codes.
-(struct command (name parameters)
+(struct command (name params)
   #:transparent
   #:extra-constructor-name make-command
   #:methods gen:custom-write
   [(define write-proc
      (make-constructor-style-printer
       (lambda (obj) 'command)
-      (lambda (obj) (list (command-name obj) (command-parameters obj)))))])
+      (lambda (obj) (list (command-name obj) (command-params obj)))))])
 
 ;; -------------------- PARSING
 
@@ -192,7 +192,7 @@
   
   (define (write-command cmd)
     (write-code (command-name cmd))
-    (map write-code (command-parameters cmd))
+    (map write-code (command-params cmd))
     (display #\newline out))
   
   (map write-command commands)
@@ -350,14 +350,14 @@
 
 ;; Consumes a code? and a command? and produces #t if the code
 ;; is a parameter in the command.
-(define (parameter-in-command? a-code cmd)
-  (member? a-code (command-parameters cmd)))
+(define (param-in-command? a-code cmd)
+  (member? a-code (command-params cmd)))
 
 ;; Consumes a symbol? and a command? and produces a code
 ;; that matches the given letter. Otherwise it produces #f.
-(define (parameter-by-letter letter cmd)
+(define (param-by-letter letter cmd)
   (findf (lambda (a-code) (symbol=? letter (code-letter a-code)))
-        (command-parameters cmd)))
+        (command-params cmd)))
 
 ;; Consumes a code? and a command? and produces #t if the code
 ;; is the name in the command.
@@ -366,12 +366,12 @@
 
 ;; Consumes a command? and produces a list of coordinates.
 (define (get-coordinates cmd)
-  (define x (parameter-by-letter 'X cmd))
-  (define y (parameter-by-letter 'Y cmd))
-  (define z (parameter-by-letter 'Z cmd))
-  (define i (parameter-by-letter 'I cmd))
-  (define j (parameter-by-letter 'J cmd))
-  (define k (parameter-by-letter 'K cmd))
+  (define x (param-by-letter 'X cmd))
+  (define y (param-by-letter 'Y cmd))
+  (define z (param-by-letter 'Z cmd))
+  (define i (param-by-letter 'I cmd))
+  (define j (param-by-letter 'J cmd))
+  (define k (param-by-letter 'K cmd))
   (define xyz-coord (vector-filter-not false? (vector x y z)))
   (define ijk-coord (vector-filter-not false? (vector i j k)))
   (values xyz-coord ijk-coord))
@@ -393,14 +393,14 @@
                                      (vector->list ijk-updated-coord))))
   
     (define (keep/replace param)
-    (define new-param/false (parameter-by-letter (code-letter param)
+    (define new-param/false (param-by-letter (code-letter param)
                                                  dummy-cmd))
     (if new-param/false
         new-param/false
         param))
   
   (command (command-name cmd)
-           (map keep/replace (command-parameters cmd))))
+           (map keep/replace (command-params cmd))))
 
 ;; -------------------- PROGRAM FUNCTIONS
 ;; Consumes a list of commands and an update function,
