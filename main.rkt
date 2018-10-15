@@ -1,7 +1,9 @@
 #lang racket/base
 
 (module+ test
-  (require rackunit))
+  (require rackunit
+           rackunit/text-ui
+           "tests.rkt"))
 
 ;; Notice
 ;; To install (from within the package directory):
@@ -29,7 +31,23 @@
 
 (module+ test
   ;; Tests to be run with raco test
-  ;; Tests still needed.
+  (displayln "Running Tests.")
+  
+  (run-tests test:g-code-letter? 'verbose)
+  
+  (run-tests test:g-code? 'verbose)
+  (run-tests test:m-code? 'verbose)
+  (run-tests test:f-code? 'verbose)
+  (run-tests test:m-code? 'verbose)
+  (run-tests test:s-code? 'verbose)
+  (run-tests test:r-code? 'verbose)
+  (run-tests test:p-code? 'verbose)
+  (run-tests test:x-code? 'verbose)
+  (run-tests test:y-code? 'verbose)
+  (run-tests test:z-code? 'verbose)
+  (run-tests test:i-code? 'verbose)
+  (run-tests test:j-code? 'verbose)
+  (run-tests test:k-code? 'verbose)
   )
 
 (module+ main
