@@ -39,6 +39,7 @@
   (j-code? (code? . -> . boolean?))
   (k-code? (code? . -> . boolean?))
 
+  (empty-coord? (vector? . -> . boolean?))
   (x-coord? (vector? . -> . boolean?))
   (y-coord? (vector? . -> . boolean?))
   (z-coord? (vector? . -> . boolean?))
@@ -240,6 +241,9 @@
 
 ;; -------------------- COORDINATE FUNCTIONS
 
+(define empty-coord?
+  (vector/c #:flat? #t))
+
 (define x-coord?
     (vector/c x-code?
               #:flat? #t))
@@ -307,7 +311,7 @@
               #:flat? #t))
 
 (define coordinate?
-  (or/c (vector/c #:flat? #t)
+  (or/c empty-coord?
         x-coord?
         y-coord?
         z-coord?

@@ -188,18 +188,19 @@ is a @racket[vector] with one, two, or three elements
 depending on the number of dimensions. Each element should be an X, Y, Z, I, J, or K code.
 
 @defproc*[#:kind "procedures"
-          ([(x-coord? [val any]) boolean?]
-           [(y-coord? [val any]) boolean?]
-           [(z-coord? [val any]) boolean?]
-           [(xy-coord? [val any]) boolean?]
-           [(xz-coord? [val any]) boolean?]
-           [(xyz-coord? [val any]) boolean?]
-           [(i-coord? [val any]) boolean?]
-           [(j-coord? [val any]) boolean?]
-           [(k-coord? [val any]) boolean?]
-           [(ij-coord? [val any]) boolean?]
-           [(ik-coord? [val any]) boolean?]
-           [(ijk-coord? [val any]) boolean?])]{
+          ([(empty-coord? [vec vector?]) boolean?]
+           [(x-coord? [vec vector?]) boolean?]
+           [(y-coord? [vec vector?]) boolean?]
+           [(z-coord? [vec vector?]) boolean?]
+           [(xy-coord? [vec vector?]) boolean?]
+           [(xz-coord? [vec vector?]) boolean?]
+           [(xyz-coord? [vec vector?]) boolean?]
+           [(i-coord? [vec vector?]) boolean?]
+           [(j-coord? [vec vector?]) boolean?]
+           [(k-coord? [vec vector?]) boolean?]
+           [(ij-coord? [vec vector?]) boolean?]
+           [(ik-coord? [vec vector?]) boolean?]
+           [(ijk-coord? [vec vector?]) boolean?])]{
  Consumes anything and produces @racket[#t] if the given argument is a vector
  in the correct form. The number of codes in the vector should match the number
  of expected dimensions, and the order of the codes should be canonical. The following
@@ -223,7 +224,7 @@ depending on the number of dimensions. Each element should be an X, Y, Z, I, J, 
 @defproc[(coordinate? [val any]) boolean?]{
  Equivalent to
  @racketblock[
- (or (equal? #() val)
+ (or (empty-coord? val)
      (x-coord? val)
      (y-coord? val)
      (z-coord? val)
@@ -237,7 +238,7 @@ depending on the number of dimensions. Each element should be an X, Y, Z, I, J, 
      (ik-coord? val)
      (ijk-coord? val))
  ]
- but the result is converted to a boolean.
+ where the result is converted to a boolean.
 }
 
 @defproc[(get-coordinates [command command?]) (values coordinate? coordinate?)]{
