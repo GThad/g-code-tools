@@ -82,7 +82,7 @@ we provide reflect this.
  ;; G0 X100 Y100 G1 X0 Y0 is okay, but it is invalid G-code since
  ;; there are 2 actual commands.
  (command (code 'G 0) (list (code 'X 100) (code 'Y 100)
-                            (code 'G 0) (code 'X 0) (code 'Y 0)))
+ (code 'G 0) (code 'X 0) (code 'Y 0)))
  )
 }
 
@@ -277,7 +277,7 @@ depending on the number of dimensions. Each element should be an X, Y, Z, I, J, 
 }
 
 @defproc[(update-program-coords [commands (listof command?)]
-                                     [updater (-> coord? coord?)])
+                                [updater (-> coord? coord?)])
          (listof command?)]{
  Equivalent to
  @racketblock[(map (lambda (a-cmd) (update-coords a-cmd updater)) commands)]
@@ -292,10 +292,10 @@ We make no guarantees, but we will try. Anyone is free to send a pull request!
  @item{Proper parsing errors.}
  @item{Ensuring writing always produces valid G-code.}
  @item{Better support for more codes. For example, a function for changing all F codes, which
- represent feed rates.}
+  represent feed rates.}
  @item{Support for semi-colon comments appearing at the end of lines.}
  @item{Semantic validation of G-code. This means ensuring multiple commands aren't on the same
- line, checking for proper parameters to commands, etc.}
+  line, checking for proper parameters to commands, etc.}
  @item{Tool-path simulations.}
  @item{Sorting functions for minimizing non-work movement.}
  @item{G-code to pict and pict to G-code conversion. Other converters?}

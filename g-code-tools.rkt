@@ -74,22 +74,22 @@
   (k-command? (command? . -> . boolean?))
 
   (get-coords (command?
-                    . -> .
-                    (values coord? coord?)))
+               . -> .
+               (values coord? coord?)))
   
   (update-coords (command? (coord? . -> . coord?)
-                       . -> .
-                       command?))
+                           . -> .
+                           command?))
 
   (update-commands ((listof command?) (command?
                                        . -> .
                                        (or/c command? null (listof command?)))
-                    . -> .
-                    (listof command?)))
+                                      . -> .
+                                      (listof command?)))
   
   (update-program-coords ((listof command?) (coord? . -> . coord?)
-                               . -> .
-                               (listof command?)))
+                                            . -> .
+                                            (listof command?)))
   ))
 
 ;; -------------------- G-CODE STRUCTURES
@@ -160,7 +160,7 @@
   (lexer [(eof) null]
          [whitespace (lex-line input-port)]
          [g-code-comment
-            (lex-line input-port)]
+          (lex-line input-port)]
          [g-code-word
           (cons (lex-word (open-input-string lexeme))
                 (lex-line input-port))]))
@@ -245,70 +245,70 @@
   (vector/c #:flat? #t))
 
 (define x-coord?
-    (vector/c x-code?
-              #:flat? #t))
+  (vector/c x-code?
+            #:flat? #t))
 
 (define y-coord?
-    (vector/c y-code?
-              #:flat? #t))
+  (vector/c y-code?
+            #:flat? #t))
 
 (define z-coord?
-    (vector/c z-code?
-              #:flat? #t))
+  (vector/c z-code?
+            #:flat? #t))
 
 (define xy-coord?
-    (vector/c x-code?
-              y-code?
-              #:flat? #t))
+  (vector/c x-code?
+            y-code?
+            #:flat? #t))
 
 (define xz-coord?
-    (vector/c x-code?
-              z-code?
-              #:flat? #t))
+  (vector/c x-code?
+            z-code?
+            #:flat? #t))
 
 (define yz-coord?
-    (vector/c y-code?
-              z-code?
-              #:flat? #t))
+  (vector/c y-code?
+            z-code?
+            #:flat? #t))
 
 (define xyz-coord?
-    (vector/c x-code?
-              y-code?
-              z-code?
-              #:flat? #t))
+  (vector/c x-code?
+            y-code?
+            z-code?
+            #:flat? #t))
 
 (define i-coord?
-    (vector/c i-code?
-              #:flat? #t))
+  (vector/c i-code?
+            #:flat? #t))
 
 (define j-coord?
-    (vector/c j-code?
-              #:flat? #t))
+  (vector/c j-code?
+            #:flat? #t))
 
 (define k-coord?
-    (vector/c k-code?
-              #:flat? #t))
+  (vector/c k-code?
+            #:flat? #t))
 
 (define ij-coord?
-    (vector/c i-code?
-              j-code?
-              #:flat? #t))
+  (vector/c i-code?
+            j-code?
+            #:flat? #t))
 
 (define ik-coord?
-    (vector/c i-code?
-              k-code?
-              #:flat? #t))
+  (vector/c i-code?
+            k-code?
+            #:flat? #t))
 
 (define jk-coord?
-    (vector/c j-code?
-              k-code?
-              #:flat? #t))
+  (vector/c j-code?
+            k-code?
+            #:flat? #t))
 
 (define ijk-coord?
-    (vector/c i-code?
-              j-code?
-              k-code?
-              #:flat? #t))
+  (vector/c i-code?
+            j-code?
+            k-code?
+            #:flat? #t))
 
 (define coord?
   (or/c empty-coord?
@@ -357,7 +357,7 @@
 ;; that matches the given symbol. Otherwise it produces #f.
 (define (param-by-sym sym cmd)
   (findf (lambda (a-code) (symbol=? sym (code-sym a-code)))
-        (command-params cmd)))
+         (command-params cmd)))
 
 ;; Consumes a code? and a command? and produces #t if the code
 ;; is the name in the command.
@@ -392,9 +392,9 @@
                              (append (vector->list xyz-updated-coord)
                                      (vector->list ijk-updated-coord))))
   
-    (define (keep/replace param)
+  (define (keep/replace param)
     (define new-param/false (param-by-sym (code-sym param)
-                                                 dummy-cmd))
+                                          dummy-cmd))
     (if new-param/false
         new-param/false
         param))
