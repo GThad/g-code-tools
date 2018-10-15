@@ -288,3 +288,11 @@ any of them will be done, but we will try. Anyone is free to send a pull request
  @item{G-code to pict and pict to G-code conversion. Other converters?}
  @item{Multi-threaded functions.}
  ]
+
+@section{Changelog}
+
+@itemize[
+ @item{@bold{0.1 --- 2018-10-15}
+  @itemize[@item{First release.}]
+ }
+ ]

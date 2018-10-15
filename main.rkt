@@ -29,8 +29,10 @@
 
 (module+ test
   ;; Tests to be run with raco test
+  ;; Tests still needed.
   )
 
 (module+ main
   ;; Main entry point, executed when run with the `racket` executable or DrRacket.
+  ;; Do nothing.
   )
