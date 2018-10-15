@@ -57,7 +57,7 @@
   (coordinate? predicate/c)
 
   (parameter-in-command? (code? command? . -> . boolean?))
-  (parameter-by-letter (symbol? command? . -> . boolean?))
+  (parameter-by-letter (g-code-letter? command? . -> . boolean?))
   (named? (code? command? . -> . boolean?))
 
   (g-command? (command? . -> . boolean?))
