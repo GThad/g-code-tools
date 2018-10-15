@@ -1,5 +1,8 @@
 #lang scribble/manual
-@require[@for-label[g-code-tools racket/base racket/contract]]
+@require[@for-label[g-code-tools
+                    racket/base
+                    racket/contract
+                    racket/list]]
 
 @title{G-code Tools}
 @author{Gifan Thadathil}
@@ -38,10 +41,10 @@ Note:
  ]
 
 @section{G-code Structures}
-A G-code program consists of codes organized into lines. Codes
-specify commands for a machine or act as parameters for other commands.
-In any case, a proper G-code program will only have one command per line. The structures
-we provide reflect this.
+A G-code program consists of commands organized into lines. A proper
+program has a single command per line. A command is made up of codes.
+A single code can be a command or multiple codes can together define
+a command. The structures we provide reflect the organization of G-code.
 
 @defproc[(g-code-sym? [val any/c]) boolean?]{
  Consumes anything and produces @racket[#t] if @racket[val] is any of
