@@ -285,6 +285,6 @@ any of them will be done, but we will try. Anyone is free to send a pull request
  line, checking for proper parameters to commands, etc.}
  @item{Tool-path simulations.}
  @item{Sorting functions for minimizing non-work movement.}
- @item{G-code to pict conversion.}
+ @item{G-code to pict and pict to G-code conversion. Other converters?}
  @item{Multi-threaded functions.}
  ]
