@@ -1,3 +1,3 @@
 gcode-tools
 ===========
-README text here.
+See the [documentation](https://docs.racket-lang.org/g-code-tools/).
