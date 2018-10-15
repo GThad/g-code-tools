@@ -18,9 +18,9 @@
 
 (provide
  (contract-out
-  (g-code-letter? (any/c . -> . boolean?))
+  (g-code-sym? (any/c . -> . boolean?))
   
-  (struct code ([letter g-code-letter?] [number number?]))
+  (struct code ([sym g-code-sym?] [number number?]))
   (struct command ([name code?] [params (listof code?)]))
 
   (read-g-code (() (input-port?) . ->* . (listof command?)))
@@ -57,7 +57,7 @@
   (coordinate? predicate/c)
 
   (param-in-command? (code? command? . -> . boolean?))
-  (param-by-letter (g-code-letter? command? . -> . boolean?))
+  (param-by-sym (g-code-sym? command? . -> . boolean?))
   (named? (code? command? . -> . boolean?))
 
   (g-command? (command? . -> . boolean?))
@@ -95,20 +95,20 @@
 ;; -------------------- G-CODE STRUCTURES
 
 ;; Consumes anything and returns whether it is
-;; a G-code letter symbol.
-(define g-code-letter?
+;; a G-code symbol.
+(define g-code-sym?
   (one-of/c 'G 'M 'F 'S 'R 'P
             'X 'Y 'Z 'I 'J 'K))
 
 ;; A code represents a single instruction in G-code.
-(struct code (letter number)
+(struct code (sym number)
   #:transparent
   #:extra-constructor-name make-code
   #:methods gen:custom-write
   [(define write-proc
      (make-constructor-style-printer
       (lambda (obj) 'code)
-      (lambda (obj) (list (code-letter obj) (code-number obj)))))])
+      (lambda (obj) (list (code-sym obj) (code-number obj)))))])
 
 ;; A command represents a line of G-code, which is a grouping of codes.
 (struct command (name params)
@@ -122,7 +122,7 @@
 
 ;; -------------------- PARSING
 
-(define-lex-abbrev g-code-letter
+(define-lex-abbrev g-code-sym
   (re-or #\G #\M #\S #\F #\R #\P #\X #\Y #\Z #\I #\J #\K
          #\g #\m #\s #\f #\r #\p #\x #\y #\z #\i #\j #\k))
 
@@ -136,7 +136,7 @@
   (re-seq "(" (re-* (char-complement #\newline)) ")"))
 
 (define-lex-abbrev g-code-word
-  (re-seq g-code-letter (re-* blank) g-code-number))
+  (re-seq g-code-sym (re-* blank) g-code-number))
 
 (define-lex-abbrev g-code-line
   (re-+ (re-seq (re-* (re-or blank g-code-comment)) g-code-word)))
@@ -149,7 +149,7 @@
 ;; the corresponding code?.
 (define lex-word
   (lexer [(eof) null]
-         [g-code-letter
+         [g-code-sym
           (code (string->symbol (string-upcase lexeme))
                 (lex-word input-port))]
          [g-code-number (string->number lexeme)]))
@@ -186,7 +186,7 @@
 ;; specified by out.
 (define (write-g-code commands [out (current-output-port)])
   (define (write-code a-code)
-    (display (code-letter a-code) out)
+    (display (code-sym a-code) out)
     (display (code-number a-code) out)
     (display " " out))
   
@@ -219,25 +219,25 @@
 ;; -------------------- CODE STRUCT FUNCTIONS
 
 ;; Consumes a string and returns a function that
-;; consumes a code? and produces true whenever the letter
-;; of the code matches letter.
-(define (make-letter-code? letter)  
+;; consumes a code? and produces true whenever the symbol
+;; of the code matches symbol.
+(define (make-sym-code? sym)  
   (lambda (a-code)
-    (symbol=? letter (code-letter a-code))))
+    (symbol=? sym (code-sym a-code))))
 
-;; Consumes a code and checks if it has the corresponding letter.
-(define g-code? (make-letter-code? 'G))
-(define m-code? (make-letter-code? 'M))
-(define f-code? (make-letter-code? 'F))
-(define s-code? (make-letter-code? 'S))
-(define x-code? (make-letter-code? 'X))
-(define y-code? (make-letter-code? 'Y))
-(define z-code? (make-letter-code? 'Z))
-(define i-code? (make-letter-code? 'I))
-(define j-code? (make-letter-code? 'J))
-(define k-code? (make-letter-code? 'K))
-(define r-code? (make-letter-code? 'R))
-(define p-code? (make-letter-code? 'P))
+;; Consumes a code and checks if it has the corresponding sym.
+(define g-code? (make-sym-code? 'G))
+(define m-code? (make-sym-code? 'M))
+(define f-code? (make-sym-code? 'F))
+(define s-code? (make-sym-code? 'S))
+(define x-code? (make-sym-code? 'X))
+(define y-code? (make-sym-code? 'Y))
+(define z-code? (make-sym-code? 'Z))
+(define i-code? (make-sym-code? 'I))
+(define j-code? (make-sym-code? 'J))
+(define k-code? (make-sym-code? 'K))
+(define r-code? (make-sym-code? 'R))
+(define p-code? (make-sym-code? 'P))
 
 ;; -------------------- COORDINATE FUNCTIONS
 
@@ -329,24 +329,24 @@
 
 ;; -------------------- COMMAND STRUCT FUNCTIONS
 
-;; Consumes a letter and produces a function that returns #t
-;; if a command has a name with the given letter.
-(define (make-letter-command? letter)
+;; Consumes a symol and produces a function that returns #t
+;; if a command has a name with the given symbol.
+(define (make-sym-command? sym)
   (lambda (cmd)
-    (symbol=? letter (code-letter (command-name cmd)))))
+    (symbol=? sym (code-sym (command-name cmd)))))
 
-(define g-command? (make-letter-command? 'G))
-(define m-command? (make-letter-command? 'M))
-(define f-command? (make-letter-command? 'F))
-(define s-command? (make-letter-command? 'S))
-(define x-command? (make-letter-command? 'X))
-(define y-command? (make-letter-command? 'Y))
-(define z-command? (make-letter-command? 'Z))
-(define i-command? (make-letter-command? 'I))
-(define j-command? (make-letter-command? 'J))
-(define k-command? (make-letter-command? 'K))
-(define p-command? (make-letter-command? 'P))
-(define r-command? (make-letter-command? 'R))
+(define g-command? (make-sym-command? 'G))
+(define m-command? (make-sym-command? 'M))
+(define f-command? (make-sym-command? 'F))
+(define s-command? (make-sym-command? 'S))
+(define x-command? (make-sym-command? 'X))
+(define y-command? (make-sym-command? 'Y))
+(define z-command? (make-sym-command? 'Z))
+(define i-command? (make-sym-command? 'I))
+(define j-command? (make-sym-command? 'J))
+(define k-command? (make-sym-command? 'K))
+(define p-command? (make-sym-command? 'P))
+(define r-command? (make-sym-command? 'R))
 
 ;; Consumes a code? and a command? and produces #t if the code
 ;; is a parameter in the command.
@@ -354,9 +354,9 @@
   (member? a-code (command-params cmd)))
 
 ;; Consumes a symbol? and a command? and produces a code
-;; that matches the given letter. Otherwise it produces #f.
-(define (param-by-letter letter cmd)
-  (findf (lambda (a-code) (symbol=? letter (code-letter a-code)))
+;; that matches the given symbol. Otherwise it produces #f.
+(define (param-by-sym sym cmd)
+  (findf (lambda (a-code) (symbol=? sym (code-sym a-code)))
         (command-params cmd)))
 
 ;; Consumes a code? and a command? and produces #t if the code
@@ -366,12 +366,12 @@
 
 ;; Consumes a command? and produces a list of coordinates.
 (define (get-coordinates cmd)
-  (define x (param-by-letter 'X cmd))
-  (define y (param-by-letter 'Y cmd))
-  (define z (param-by-letter 'Z cmd))
-  (define i (param-by-letter 'I cmd))
-  (define j (param-by-letter 'J cmd))
-  (define k (param-by-letter 'K cmd))
+  (define x (param-by-sym 'X cmd))
+  (define y (param-by-sym 'Y cmd))
+  (define z (param-by-sym 'Z cmd))
+  (define i (param-by-sym 'I cmd))
+  (define j (param-by-sym 'J cmd))
+  (define k (param-by-sym 'K cmd))
   (define xyz-coord (vector-filter-not false? (vector x y z)))
   (define ijk-coord (vector-filter-not false? (vector i j k)))
   (values xyz-coord ijk-coord))
@@ -393,7 +393,7 @@
                                      (vector->list ijk-updated-coord))))
   
     (define (keep/replace param)
-    (define new-param/false (param-by-letter (code-letter param)
+    (define new-param/false (param-by-sym (code-sym param)
                                                  dummy-cmd))
     (if new-param/false
         new-param/false

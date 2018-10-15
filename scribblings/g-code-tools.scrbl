@@ -43,14 +43,14 @@ specify commands for a machine or act as parameters for other commands.
 In any case, a proper G-code program will only have one command per line. The structures
 we provide reflect this.
 
-@defproc[(g-code-letter? [val any/c]) boolean?]{
+@defproc[(g-code-sym? [val any/c]) boolean?]{
  Consumes anything and produces @racket[#t] if @racket[val] is any of
  @racket['G], @racket['M], @racket['F], @racket['S], @racket['P], @racket['R],
  @racket['X], @racket['Y], @racket['Z], @racket['I], @racket['J], or @racket['K].
  Produces @racket[#f] otherwise.
 }
 
-@defstruct[code ([letter g-code-letter?] [number number?])]{
+@defstruct[code ([sym g-code-sym?] [number number?])]{
  Represents a single G-code code.
  
  @#reader scribble/comment-reader
@@ -144,8 +144,8 @@ we provide reflect this.
            [(i-code? [a-code code?]) boolean?]
            [(j-code? [a-code code?]) boolean?]
            [(k-code? [a-code code?]) boolean?])]{
- Consumes a code and produces @racket[#t] if @racket[(code-letter a-code)] matches the
- expected letter. Produces @racket[#f] otherwise.
+ Consumes a code and produces @racket[#t] if @racket[(code-sym a-code)] matches the
+ expected symbol. Produces @racket[#f] otherwise.
 }
 
 @defproc*[#:kind "procedures"
@@ -161,8 +161,8 @@ we provide reflect this.
            [(i-command? [a-command command?]) boolean?]
            [(j-command? [a-command command?]) boolean?]
            [(k-command? [a-command command?]) boolean?])]{
- Consumes a command and produces @racket[#t] if @racket[(code-letter (command-name a-command))]
- matches the expected letter. Produces @racket[#f] otherwise.
+ Consumes a command and produces @racket[#t] if @racket[(code-sym (command-name a-command))]
+ matches the expected symbol. Produces @racket[#f] otherwise.
 }
 
 @defproc[(named? [a-code code?] [a-command command?])
@@ -177,10 +177,10 @@ we provide reflect this.
  of @racket[(command-params a-command)]. Produces @racket[#f] otherwise.
 }
 
-@defproc[(param-by-letter [letter g-code-letter?] [a-command command?])
+@defproc[(param-by-sym [sym g-code-sym?] [a-command command?])
          (or/c code? #f)]{
  Consumes a symbol and a command. If @racket[(command-params a-command)] has a member
- @racket[a-code] such that @racket[(code-letter a-code)] matches @racket[letter], then @racket[a-code]
+ @racket[a-code] such that @racket[(code-sym a-code)] matches @racket[sym], then @racket[a-code]
  is produced. Produces @racket[#f] otherwise.
 }
 
