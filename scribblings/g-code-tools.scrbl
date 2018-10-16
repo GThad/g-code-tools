@@ -274,12 +274,8 @@ The following lists (in no particular order) new functionality/changes that are 
 We make no guarantees, but we will try. Anyone is free to send a pull request!
 
 @itemlist[
- @item{Stronger restrictions on contracts.}
- @item{Proper parsing errors.}
- @item{Ensuring writing always produces valid G-code.}
  @item{Better support for more codes. For example, a function for changing all F codes, which
   represent feed rates.}
- @item{Support for semi-colon comments appearing at the end of lines.}
  @item{Semantic validation of G-code. This means ensuring multiple commands aren't on the same
   line, checking for proper parameters to commands, etc.}
  @item{Tool-path simulations.}
