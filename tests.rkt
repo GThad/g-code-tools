@@ -10,23 +10,23 @@
 ;; -------------------- TESTS
 
 (define-test-suite
-  test:g-code-letter?
- (check-true (g-code-letter? 'G))
- (check-true (g-code-letter? 'M))
- (check-true (g-code-letter? 'F))
- (check-true (g-code-letter? 'S))
- (check-true (g-code-letter? 'R))
- (check-true (g-code-letter? 'P))
- (check-true (g-code-letter? 'X))
- (check-true (g-code-letter? 'Y))
- (check-true (g-code-letter? 'Z))
- (check-true (g-code-letter? 'I))
- (check-true (g-code-letter? 'J))
- (check-true (g-code-letter? 'K))
- (check-false (g-code-letter? 'hello))
- (check-false (g-code-letter? "G"))
- (check-false (g-code-letter? 'g))
- (check-false (g-code-letter? 20)))
+  test:g-code-sym?
+ (check-true (g-code-sym? 'G))
+ (check-true (g-code-sym? 'M))
+ (check-true (g-code-sym? 'F))
+ (check-true (g-code-sym? 'S))
+ (check-true (g-code-sym? 'R))
+ (check-true (g-code-sym? 'P))
+ (check-true (g-code-sym? 'X))
+ (check-true (g-code-sym? 'Y))
+ (check-true (g-code-sym? 'Z))
+ (check-true (g-code-sym? 'I))
+ (check-true (g-code-sym? 'J))
+ (check-true (g-code-sym? 'K))
+ (check-false (g-code-sym? 'hello))
+ (check-false (g-code-sym? "G"))
+ (check-false (g-code-sym? 'g))
+ (check-false (g-code-sym? 20)))
 
 (define-test-suite
  test:g-code?
