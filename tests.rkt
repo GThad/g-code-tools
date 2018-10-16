@@ -101,144 +101,119 @@
 
 (define-test-suite
   test:empty-coord?
-  (check-true (empty-coord? (vector)))
-  (check-false (empty-coord? (vector (code 'G 2))))
-  (check-false (empty-coord? (vector (code 'X 10))))
-  (check-false (empty-coord? (vector (code 'X 10) (code 'Y 10)))))
+  (check-true (empty-coord? null))
+  (check-false (empty-coord? (list (code 'X 10))))
+  (check-false (empty-coord? (list (code 'X 10) (code 'Y 10)))))
 
 (define-test-suite
   test:x-coord?
-  (check-true (x-coord? (vector (code 'X 10))))
-  (check-false (x-coord? (vector)))
-  (check-false (x-coord? (vector (code 'G 2))))
-  (check-false (x-coord? (vector (code 'Y 10))))
-  (check-false (x-coord? (vector (code 'X 10) (code 'Y 10)))))
+  (check-true (x-coord? (list (code 'X 10))))
+  (check-false (x-coord? null))
+  (check-false (x-coord? (list (code 'Y 10))))
+  (check-false (x-coord? (list (code 'X 10) (code 'Y 10)))))
 
 (define-test-suite
   test:y-coord?
-  (check-true (y-coord? (vector (code 'Y 10))))
-  (check-false (y-coord? (vector)))
-  (check-false (y-coord? (vector (code 'G 2))))
-  (check-false (y-coord? (vector (code 'X 10))))
-  (check-false (y-coord? (vector (code 'X 10) (code 'Y 10)))))
+  (check-true (y-coord? (list (code 'Y 10))))
+  (check-false (y-coord? null))
+  (check-false (y-coord? (list (code 'X 10))))
+  (check-false (y-coord? (list (code 'X 10) (code 'Y 10)))))
 
 (define-test-suite
   test:z-coord?
-  (check-true (z-coord? (vector (code 'Z 10))))
-  (check-false (z-coord? (vector)))
-  (check-false (z-coord? (vector (code 'G 2))))
-  (check-false (z-coord? (vector (code 'Y 10))))
-  (check-false (z-coord? (vector (code 'X 10) (code 'Y 10)))))
+  (check-true (z-coord? (list (code 'Z 10))))
+  (check-false (z-coord? null))
+  (check-false (z-coord? (list (code 'Y 10))))
+  (check-false (z-coord? (list (code 'X 10) (code 'Y 10)))))
 
 (define-test-suite
   test:xy-coord?
-  (check-true (xy-coord? (vector (code 'X 10) (code 'Y 10))))
-  (check-false (xy-coord? (vector)))
-  (check-false (xy-coord? (vector (code 'Y 10))))
-  (check-false (xy-coord? (vector (code 'G 2) (code 'M 3))))
-  (check-false (xy-coord? (vector (code 'Y 10) (code 'X 10))))
-  (check-false (xy-coord? (vector (code 'X 10) (code 'Y 10) (code 'Z 10)))))
+  (check-true (xy-coord? (list (code 'X 10) (code 'Y 10))))
+  (check-false (xy-coord? null))
+  (check-false (xy-coord? (list (code 'Y 10))))
+  (check-false (xy-coord? (list (code 'X 10) (code 'Y 10) (code 'Z 10)))))
 
 (define-test-suite
   test:xz-coord?
-  (check-true (xz-coord? (vector (code 'X 10) (code 'Z 10))))
-  (check-false (xz-coord? (vector)))
-  (check-false (xz-coord? (vector (code 'Y 10))))
-  (check-false (xz-coord? (vector (code 'G 2) (code 'M 3))))
-  (check-false (xz-coord? (vector (code 'Z 10) (code 'X 10))))
-  (check-false (xz-coord? (vector (code 'X 10) (code 'Y 10) (code 'Z 10)))))
+  (check-true (xz-coord? (list (code 'X 10) (code 'Z 10))))
+  (check-false (xz-coord? null))
+  (check-false (xz-coord? (list (code 'Y 10))))
+  (check-false (xz-coord? (list (code 'X 10) (code 'Y 10) (code 'Z 10)))))
 
 (define-test-suite
   test:yz-coord?
-  (check-true (yz-coord? (vector (code 'Y 10) (code 'Z 10))))
-  (check-false (yz-coord? (vector)))
-  (check-false (yz-coord? (vector (code 'Y 10))))
-  (check-false (yz-coord? (vector (code 'G 2) (code 'M 3))))
-  (check-false (yz-coord? (vector (code 'Z 10) (code 'Y 10))))
-  (check-false (yz-coord? (vector (code 'X 10) (code 'Y 10) (code 'Z 10)))))
+  (check-true (yz-coord? (list (code 'Y 10) (code 'Z 10))))
+  (check-false (yz-coord? null))
+  (check-false (yz-coord? (list (code 'Y 10))))
+  (check-false (yz-coord? (list (code 'X 10) (code 'Y 10) (code 'Z 10)))))
 
 (define-test-suite
   test:xyz-coord?
-  (check-true (xyz-coord? (vector (code 'X 10) (code 'Y 10) (code 'Z 10))))
-  (check-false (xyz-coord? (vector)))
-  (check-false (xyz-coord? (vector (code 'Y 10))))
-  (check-false (xyz-coord? (vector (code 'G 2) (code 'M 3) (code 'Z 3))))
-  (check-false (xyz-coord? (vector (code 'X 10) (code 'Z 10))))
-  (check-false (xyz-coord? (vector (code 'Z 10) (code 'X 10) (code 'Y 10))))
-  (check-false (xyz-coord? (vector (code 'X 10) (code 'Y 10) (code 'Z 10) (code 'I 10)))))
+  (check-true (xyz-coord? (list (code 'X 10) (code 'Y 10) (code 'Z 10))))
+  (check-false (xyz-coord? null))
+  (check-false (xyz-coord? (list (code 'Y 10))))
+  (check-false (xyz-coord? (list (code 'X 10) (code 'Z 10)))))
 
 (define-test-suite
   test:i-coord?
-  (check-true (i-coord? (vector (code 'I 10))))
-  (check-false (i-coord? (vector)))
-  (check-false (i-coord? (vector (code 'G 2))))
-  (check-false (i-coord? (vector (code 'Y 10))))
-  (check-false (i-coord? (vector (code 'I 10) (code 'J 10)))))
+  (check-true (i-coord? (list (code 'I 10))))
+  (check-false (i-coord? null))
+  (check-false (i-coord? (list (code 'Y 10))))
+  (check-false (i-coord? (list (code 'I 10) (code 'J 10)))))
 
 (define-test-suite
   test:j-coord?
-  (check-true (j-coord? (vector (code 'J 10))))
-  (check-false (j-coord? (vector)))
-  (check-false (j-coord? (vector (code 'G 2))))
-  (check-false (j-coord? (vector (code 'X 10))))
-  (check-false (j-coord? (vector (code 'I 10) (code 'J 10)))))
+  (check-true (j-coord? (list (code 'J 10))))
+  (check-false (j-coord? null))
+  (check-false (j-coord? (list (code 'X 10))))
+  (check-false (j-coord? (list (code 'I 10) (code 'J 10)))))
 
 (define-test-suite
   test:k-coord?
-  (check-true (k-coord? (vector (code 'K 10))))
-  (check-false (k-coord? (vector)))
-  (check-false (k-coord? (vector (code 'G 2))))
-  (check-false (k-coord? (vector (code 'Y 10))))
-  (check-false (k-coord? (vector (code 'I 10) (code 'K 10)))))
+  (check-true (k-coord? (list (code 'K 10))))
+  (check-false (k-coord? null))
+  (check-false (k-coord? (list (code 'Y 10))))
+  (check-false (k-coord? (list (code 'I 10) (code 'K 10)))))
 
 (define-test-suite
   test:ij-coord?
-  (check-true (ij-coord? (vector (code 'I 10) (code 'J 10))))
-  (check-false (ij-coord? (vector)))
-  (check-false (ij-coord? (vector (code 'G 2) (code 'J 5))))
-  (check-false (ij-coord? (vector (code 'I 10))))
-  (check-false (ij-coord? (vector (code 'J 10) (code 'I 10))))
-  (check-false (ij-coord? (vector (code 'I 10) (code 'J 10) (code 'K 10)))))
+  (check-true (ij-coord? (list (code 'I 10) (code 'J 10))))
+  (check-false (ij-coord? null))
+  (check-false (ij-coord? (list (code 'I 10))))
+  (check-false (ij-coord? (list (code 'I 10) (code 'J 10) (code 'K 10)))))
 
 (define-test-suite
   test:ik-coord?
-  (check-true (ik-coord? (vector (code 'I 10) (code 'K 10))))
-  (check-false (ik-coord? (vector)))
-  (check-false (ik-coord? (vector (code 'I 10))))
-  (check-false (ik-coord? (vector (code 'G 2) (code 'K 5))))
-  (check-false (ik-coord? (vector (code 'K 10) (code 'I 10))))
-  (check-false (ik-coord? (vector (code 'I 10) (code 'K 10) (code 'K 10)))))
+  (check-true (ik-coord? (list (code 'I 10) (code 'K 10))))
+  (check-false (ik-coord? null))
+  (check-false (ik-coord? (list (code 'I 10))))
+  (check-false (ik-coord? (list (code 'I 10) (code 'J 10) (code 'K 10)))))
 
 (define-test-suite
   test:jk-coord?
-  (check-true (jk-coord? (vector (code 'J 10) (code 'K 10))))
-  (check-false (jk-coord? (vector)))
-  (check-false (jk-coord? (vector (code 'J 10))))
-  (check-false (jk-coord? (vector (code 'G 2) (code 'J 5))))
-  (check-false (jk-coord? (vector (code 'K 10) (code 'J 10))))
-  (check-false (jk-coord? (vector (code 'I 10) (code 'J 10) (code 'K 10)))))
+  (check-true (jk-coord? (list (code 'J 10) (code 'K 10))))
+  (check-false (jk-coord? null))
+  (check-false (jk-coord? (list (code 'J 10))))
+  (check-false (jk-coord? (list (code 'I 10) (code 'J 10) (code 'K 10)))))
 
 (define-test-suite
   test:ijk-coord?
-  (check-true (ijk-coord? (vector (code 'I 10) (code 'J 10) (code 'K 10))))
-  (check-false (ijk-coord? (vector)))
-  (check-false (ijk-coord? (vector (code 'Y 10))))
-  (check-false (ijk-coord? (vector (code 'I 10) (code 'J 10))))
-  (check-false (ijk-coord? (vector (code 'G 2) (code 'J 5) (code 'M 3))))
-  (check-false (ijk-coord? (vector (code 'K 10) (code 'J 10) (code 'I 10))))
-  (check-false (ijk-coord? (vector (code 'I 10) (code 'J 10) (code 'K 10) (code 'X 10)))))
+  (check-true (ijk-coord? (list (code 'I 10) (code 'J 10) (code 'K 10))))
+  (check-false (ijk-coord? null))
+  (check-false (ijk-coord? (list (code 'Y 10))))
+  (check-false (ijk-coord? (list (code 'I 10) (code 'J 10)))))
 
 (define-test-suite
   test:coord?
-  (check-true (coord? (vector)))
-  (check-true (coord? (vector (code 'I 10))))
-  (check-true (coord? (vector (code 'Z 10))))
-  (check-true (coord? (vector (code 'I 10) (code 'J 10) (code 'K 10))))
-  (check-true (coord? (vector (code 'I 10) (code 'J 10))))
-  (check-false (coord? (vector (code 'K 10) (code 'J 10) (code 'I 10))))
-  (check-false (coord? (vector (code 'G 10))))
-  (check-false (coord? (vector (code 'G 10))))
-  (check-false (coord? (vector 1 2 3)))
+  (check-true (coord? null))
+  (check-true (coord? (list (code 'I 10))))
+  (check-true (coord? (list (code 'Z 10))))
+  (check-true (coord? (list (code 'I 10) (code 'J 10) (code 'K 10))))
+  (check-true (coord? (list (code 'I 10) (code 'J 10))))
+  (check-false (coord? (list (code 'K 10) (code 'J 10) (code 'I 10))))
+  (check-false (coord? (list (code 'G 10))))
+  (check-false (coord? (list (code 'G 10))))
+  (check-false (coord? (list 1 2 3)))
   (check-false (coord? 10))
   (check-false (coord? "hello")))
 

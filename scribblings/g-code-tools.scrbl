@@ -190,66 +190,58 @@ a command. The structures we provide reflect the organization of G-code.
 @section{Coordinates}
 Some commands operate on coordinates, which are specified with a certain group of
 codes. For example "G0 X20 Y20 Z20" tells the machine to move quickly to coordinate
-(20, 20, 20). The X, Y, and Z codes together specify the coordinate. Within Racket, a coordinate
-is a @racket[vector] with one, two, or three elements
+(20, 20, 20). The X, Y, and Z codes together specify the coordinate.
+
+Within Racket, a coordinate is a @racket[list] with one, two, or three elements
 depending on the number of dimensions. Each element should be an X, Y, Z, I, J, or K code.
 
-@defproc*[#:kind "procedures"
-          ([(empty-coord? [vec vector?]) boolean?]
-           [(x-coord? [vec vector?]) boolean?]
-           [(y-coord? [vec vector?]) boolean?]
-           [(z-coord? [vec vector?]) boolean?]
-           [(xy-coord? [vec vector?]) boolean?]
-           [(xz-coord? [vec vector?]) boolean?]
-           [(xyz-coord? [vec vector?]) boolean?]
-           [(i-coord? [vec vector?]) boolean?]
-           [(j-coord? [vec vector?]) boolean?]
-           [(k-coord? [vec vector?]) boolean?]
-           [(ij-coord? [vec vector?]) boolean?]
-           [(ik-coord? [vec vector?]) boolean?]
-           [(ijk-coord? [vec vector?]) boolean?])]{
- Consumes anything and produces @racket[#t] if @racket[vec] is in the correct form:
+@defproc[(coord? [val any/c]) boolean?]{
+ Consumes anything and produces @racket[#t] if:
  @itemlist[
- @item{Only codes should be in @racket[vec].}
- @item{The number of codes should match the expected number of dimensions.}
- @item{The order of codes should be canonical. For example X,Y,Z is canonical, but Y,X,Z is not.}
+ @item{@racket[val] is a list.}
+ @item{Every element of @racket[val] is a coordinate code.}
+ @item{@racket[val] also satisfies one of @racket[x-code?], @racket[y-code?], etc.}
  #:style 'ordered]
 
- Examples may explain this more clearly.
+ @racketinput[(coord? (list (code 'X 20)))]
+ @racketresultblock[#t]
+ @racketinput[(coord? (list (code 'Y 20)))]
+ @racketresultblock[#t]
+ @racketinput[(coord? (list (code 'X 20) (code 'Y 20)))]
+ @racketresultblock[#t]
 
- @racketinput[(x-coord? #((code 'X 20)))]
- @racketresultblock[#t]
- @racketinput[(x-coord? #((code 'Y 20)))]
- @racketresultblock[#f]
- @racketinput[(x-coord? #((code 'X 20) (code 'Y 20)))]
- @racketresultblock[#f]
  
- @racketinput[(xy-coord? #((code 'X 20) (code 'Y 20)))]
- @racketresultblock[#t]
- @racketinput[(xy-coord? #((code 'X 20)))]
+ @racketinput[(coord? 20)]
  @racketresultblock[#f]
- @racketinput[(xy-coord? #((code 'Y 20) (code 'X 20)))]
+ @racketinput[(coord? (code 'X 20))]
+ @racketresultblock[#f]
+ @racketinput[(coord? (list (code 'G 2)))]
+ @racketresultblock[#f]
+ @racketinput[(coord? (list (code 'Y 20) (code 'X 20)))]
  @racketresultblock[#f]
 }
 
-@defproc[(coord? [val any/c]) boolean?]{
- Equivalent to
- @racketblock[
- (or (empty-coord? val)
-     (x-coord? val)
-     (y-coord? val)
-     (z-coord? val)
-     (xy-coord? val)
-     (xz-coord? val)
-     (xyz-coord? val)
-     (i-coord? val)
-     (j-coord? val)
-     (k-coord? val)
-     (ij-coord? val)
-     (ik-coord? val)
-     (ijk-coord? val))
- ]
- where the result is converted to a boolean.
+@defproc*[#:kind "procedures"
+          ([(empty-coord? [coord coord?]) boolean?]
+           [(x-coord? [coord coord?]) boolean?]
+           [(y-coord? [coord coord?]) boolean?]
+           [(z-coord? [coord coord?]) boolean?]
+           [(xy-coord? [coord coord?]) boolean?]
+           [(xz-coord? [coord coord?]) boolean?]
+           [(xyz-coord? [coord coord?]) boolean?]
+           [(i-coord? [coord coord?]) boolean?]
+           [(j-coord? [coord coord?]) boolean?]
+           [(k-coord? [coord coord?]) boolean?]
+           [(ij-coord? [coord coord?]) boolean?]
+           [(ik-coord? [coord coord?]) boolean?]
+           [(ijk-coord? [coord coord?]) boolean?])]{
+ Consumes a coordinate and produces @racket[#t] if @racket[coord] is in the correct form:
+ @itemlist[
+ @item{The number of codes should match the expected number of dimensions.}
+ @item{The order of codes should match the name of the function.
+      For example a list of a X, Y, and Z code matches @racket[xyz-code?], but
+      a list of a Y, X, and Z code would not.}
+ #:style 'ordered]
 }
 
 @defproc[(get-coords [cmd command?]) (values coord? coord?)]{
