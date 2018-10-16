@@ -281,6 +281,35 @@
    "Produce #f on a non-K-command?"
    (check-false (k-command? (command (code 'X 0) null)))))
 
+(define-test-suite
+  test:param-in-command?
+  (test-case
+   "Produces #f when params is empty."
+   (check-false (param-in-command? (code 'X 20)
+                                   (command (code 'G 0)
+                                            null))))
+
+  (test-case
+   "Produces #t when code is in params."
+   (check-true (param-in-command? (code 'X 20)
+                                   (command (code 'G 0)
+                                            (list (code 'X 20)
+                                                  (code 'Y 20))))))
+
+  (test-case
+   "Produces #f when code is not in params."
+   (check-false (param-in-command? (code 'Z 20)
+                                   (command (code 'G 0)
+                                            (list (code 'X 20)
+                                                  (code 'Y 20))))))
+
+  (test-case
+   "Produces #f when code with same sym but different num is in params."
+   (check-false (param-in-command? (code 'X 10)
+                                   (command (code 'G 0)
+                                            (list (code 'X 20)
+                                                  (code 'Y 20)))))))
+
 ;; -------------------- COORDINATE TESTS
 
 (define-test-suite
