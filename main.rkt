@@ -33,7 +33,7 @@
   ;; Tests to be run with raco test
   (displayln "Running Tests.")
   
-  (run-tests test:g-code-letter? 'verbose)
+  (run-tests test:g-code-sym? 'verbose)
   
   (run-tests test:g-code? 'verbose)
   (run-tests test:m-code? 'verbose)
