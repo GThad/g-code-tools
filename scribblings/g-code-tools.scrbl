@@ -2,7 +2,8 @@
 @require[@for-label[g-code-tools
                     racket/base
                     racket/contract
-                    racket/list]]
+                    racket/list
+                    racket/math]]
 
 @title{G-code Tools}
 @author{Gifan Thadathil}
@@ -104,29 +105,23 @@ a command. The structures we provide reflect the organization of G-code.
 }
 
 @defproc[(write-g-code [cmds (listof command?)]
-                       [out output-port? (current-output-port)])
+                       [out output-port? (current-output-port)]
+                       [num-decs (nonnegative-integer?)])
          void?]{
  Writes a list of commands as a G-code program to @racket[out].
  If @racket[out] is not specified, then the current output port is used.
 
  As for style, each command is written to a new line, and that is all.
- No comments or anything else is added to minimize file sizes.
- In addition, it is possible that the written G-code is syntactically malformed! We've
+ No comments or anything else is added to minimize file sizes. Before writing,
+ every number is rounded to @racket[num-decs] decimal places.
+ 
+ Note that it is possible that the written G-code is syntactically malformed! We have
  noticed the following problems:
 
  @itemlist[
  @item{Written lines can be more than 256 characters (the maximum
    defined by G-code) if the command is unusually large. This problem should rarely
    arise if you are using semantically valid G-code, and keep numbers relatively small.}
- @item{Numbers can be in the wrong form. Numbers are written as Racket usually writes them.
-   However, Racket does not always write numbers
-   correctly for G-code. For example, Racket writes long decimal values in
-   scientific notation (@racket[1.0234123E24]). G-code does not support
-   scientific notation.
-
-   A workaround is to round all inexact numbers to a small number (2-5) of decimal
-   points, depending on the accuracy of your machine. In this case, Racket should
-   write the numbers correctly.}
  #:style 'ordered]
 
  These issues will be fixed in the future.

@@ -190,10 +190,17 @@
 
 ;; Consumes a list of command? and writes to the output-port?
 ;; specified by out.
-(define (write-g-code commands [out (current-output-port)])
+(define (write-g-code commands
+                      [out (current-output-port)]
+                      [num-decs 4])
+  (define (round-num num)
+    (exact->inexact (/ (round (* (inexact->exact num)
+                                 (expt 10 num-decs)))
+                       (expt 10 num-decs))))
+  
   (define (write-code a-code)
     (display (code-sym a-code) out)
-    (display (code-num a-code) out)
+    (display (round-num (code-num a-code)) out)
     (display " " out))
   
   (define (write-command cmd)
