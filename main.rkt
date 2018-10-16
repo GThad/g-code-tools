@@ -48,6 +48,22 @@
   (run-tests test:i-code? 'verbose)
   (run-tests test:j-code? 'verbose)
   (run-tests test:k-code? 'verbose)
+
+  (run-tests test:empty-coord? 'verbose)
+  (run-tests test:x-coord? 'verbose)
+  (run-tests test:y-coord? 'verbose)
+  (run-tests test:z-coord? 'verbose)
+  (run-tests test:xy-coord? 'verbose)
+  (run-tests test:xz-coord? 'verbose)
+  (run-tests test:yz-coord? 'verbose)
+  (run-tests test:xyz-coord? 'verbose)
+  (run-tests test:i-coord? 'verbose)
+  (run-tests test:j-coord? 'verbose)
+  (run-tests test:k-coord? 'verbose)
+  (run-tests test:ij-coord? 'verbose)
+  (run-tests test:ik-coord? 'verbose)
+  (run-tests test:jk-coord? 'verbose)
+  (run-tests test:ijk-coord? 'verbose)
   )
 
 (module+ main
