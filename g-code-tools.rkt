@@ -245,87 +245,88 @@
   (vector/c #:flat? #t))
 
 (define x-coord?
-  (vector/c x-code?
+  (vector/c (and/c code? x-code?)
             #:flat? #t))
 
 (define y-coord?
-  (vector/c y-code?
+  (vector/c (and/c code? y-code?)
             #:flat? #t))
 
 (define z-coord?
-  (vector/c z-code?
+  (vector/c (and/c code? z-code?)
             #:flat? #t))
 
 (define xy-coord?
-  (vector/c x-code?
-            y-code?
+  (vector/c (and/c code? x-code?)
+            (and/c code? y-code?)
             #:flat? #t))
 
 (define xz-coord?
-  (vector/c x-code?
-            z-code?
+  (vector/c (and/c code? x-code?)
+            (and/c code? z-code?)
             #:flat? #t))
 
 (define yz-coord?
-  (vector/c y-code?
-            z-code?
+  (vector/c (and/c code? y-code?)
+            (and/c code? z-code?)
             #:flat? #t))
 
 (define xyz-coord?
-  (vector/c x-code?
-            y-code?
-            z-code?
+  (vector/c (and/c code? x-code?)
+            (and/c code? y-code?)
+            (and/c code? z-code?)
             #:flat? #t))
 
 (define i-coord?
-  (vector/c i-code?
+  (vector/c (and/c code? i-code?)
             #:flat? #t))
 
 (define j-coord?
-  (vector/c j-code?
+  (vector/c (and/c code? j-code?)
             #:flat? #t))
 
 (define k-coord?
-  (vector/c k-code?
+  (vector/c (and/c code? k-code?)
             #:flat? #t))
 
 (define ij-coord?
-  (vector/c i-code?
-            j-code?
+  (vector/c (and/c code? i-code?)
+            (and/c code? j-code?)
             #:flat? #t))
 
 (define ik-coord?
-  (vector/c i-code?
-            k-code?
+  (vector/c (and/c code? i-code?)
+            (and/c code? k-code?)
             #:flat? #t))
 
 (define jk-coord?
-  (vector/c j-code?
-            k-code?
+  (vector/c (and/c code? j-code?)
+            (and/c code? k-code?)
             #:flat? #t))
 
 (define ijk-coord?
-  (vector/c i-code?
-            j-code?
-            k-code?
+  (vector/c (and/c code? i-code?)
+            (and/c code? j-code?)
+            (and/c code? k-code?)
             #:flat? #t))
 
 (define coord?
-  (or/c empty-coord?
-        x-coord?
-        y-coord?
-        z-coord?
-        xy-coord?
-        xz-coord?
-        yz-coord?
-        xyz-coord?
-        i-coord?
-        j-coord?
-        k-coord?
-        ij-coord?
-        ik-coord?
-        jk-coord?
-        ijk-coord?))
+  (and/c vector?
+         (or/c empty-coord?
+               x-coord?
+               y-coord?
+               z-coord?
+               xy-coord?
+               xz-coord?
+               yz-coord?
+               xyz-coord?
+               i-coord?
+               j-coord?
+               k-coord?
+               ij-coord?
+               ik-coord?
+               jk-coord?
+               ijk-coord?)))
 
 ;; -------------------- COMMAND STRUCT FUNCTIONS
 
