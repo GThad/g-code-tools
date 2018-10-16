@@ -7,7 +7,7 @@
 
 (provide (all-defined-out))
 
-;; -------------------- TESTS
+;; -------------------- CODE AND COMMAND TESTS
 
 (define-test-suite
   test:g-code-sym?
@@ -40,64 +40,126 @@
    (check-false (g-code-sym? 'g))))
 
 (define-test-suite
- test:g-code?
- (check-true (g-code? (code 'G 0)))
- (check-false (g-code? (code 'X 0))))
+  test:g-code?
+  (test-case
+   "Produce #t on a G-code?"
+   (check-true (g-code? (code 'G 0))))
+  
+  (test-case
+   "Produce #f on a non-G-code?"
+   (check-false (g-code? (code 'X 0)))))
 
 (define-test-suite
- test:m-code?
- (check-true (m-code? (code 'M 0)))
- (check-false (m-code? (code 'X 0))))
+  test:m-code?
+  (test-case
+   "Produce #t on a M-code?"
+   (check-true (m-code? (code 'M 0))))
+  
+  (test-case
+   "Produce #f on a non-M-code?"
+   (check-false (m-code? (code 'X 0)))))
 
 (define-test-suite
- test:f-code?
- (check-true (f-code? (code 'F 0)))
- (check-false (f-code? (code 'X 0))))
+  test:f-code?
+  (test-case
+   "Produce #t on a F-code?"
+   (check-true (f-code? (code 'F 0))))
+  
+  (test-case
+   "Produce #f on a non-F-code?"
+   (check-false (f-code? (code 'X 0)))))
 
 (define-test-suite
- test:s-code?
- (check-true (s-code? (code 'S 0)))
- (check-false (s-code? (code 'X 0))))
+  test:s-code?
+  (test-case
+   "Produce #t on a S-code?"
+   (check-true (s-code? (code 'S 0))))
+  
+  (test-case
+   "Produce #f on a non-S-code?"
+   (check-false (s-code? (code 'X 0)))))
 
 (define-test-suite
- test:r-code?
- (check-true (r-code? (code 'R 0)))
- (check-false (r-code? (code 'X 0))))
+  test:r-code?
+  (test-case
+   "Produce #t on a R-code?"
+   (check-true (r-code? (code 'R 0))))
+  
+  (test-case
+   "Produce #f on a non-R-code?"
+   (check-false (r-code? (code 'X 0)))))
 
 (define-test-suite
- test:p-code?
- (check-true (p-code? (code 'P 0)))
- (check-false (p-code? (code 'X 0))))
+  test:p-code?
+  (test-case
+   "Produce #t on a P-code?"
+   (check-true (p-code? (code 'P 0))))
+  
+  (test-case
+   "Produce #f on a non-P-code?"
+   (check-false (p-code? (code 'X 0)))))
 
 (define-test-suite
- test:x-code?
- (check-true (x-code? (code 'X 0)))
- (check-false (x-code? (code 'F 0))))
+  test:x-code?
+  (test-case
+   "Produce #t on a X-code?"
+   (check-true (x-code? (code 'X 0))))
+  
+  (test-case
+   "Produce #f on a non-X-code?"
+   (check-false (x-code? (code 'F 0)))))
 
 (define-test-suite
- test:y-code?
- (check-true (y-code? (code 'Y 0)))
- (check-false (y-code? (code 'X 0))))
+  test:y-code?
+  (test-case
+   "Produce #t on a Y-code?"
+   (check-true (y-code? (code 'Y 0))))
+  
+  (test-case
+   "Produce #f on a non-Y-code?"
+   (check-false (y-code? (code 'X 0)))))
 
 (define-test-suite
- test:z-code?
- (check-true (z-code? (code 'Z 0)))
- (check-false (z-code? (code 'X 0))))
+  test:z-code?
+  (test-case
+   "Produce #t on a Z-code?"
+   (check-true (z-code? (code 'Z 0))))
+  
+  (test-case
+   "Produce #f on a non-Z-code?"
+   (check-false (z-code? (code 'X 0)))))
 
 (define-test-suite
- test:i-code?
- (check-true (i-code? (code 'I 0)))
- (check-false (i-code? (code 'X 0))))
+  test:i-code?
+  (test-case
+   "Produce #t on a I-code?"
+   (check-true (i-code? (code 'I 0))))
+  
+  (test-case
+   "Produce #f on a non-I-code?"
+   (check-false (i-code? (code 'X 0)))))
 
 (define-test-suite
- test:j-code?
- (check-true (j-code? (code 'J 0)))
- (check-false (j-code? (code 'X 0))))
+  test:j-code?
+  (test-case
+   "Produce #t on a J-code?"
+   (check-true (j-code? (code 'J 0))))
+  
+  (test-case
+   "Produce #f on a non-J-code?"
+   (check-false (j-code? (code 'X 0)))))
 
 (define-test-suite
- test:k-code?
- (check-true (k-code? (code 'K 0)))
- (check-false (k-code? (code 'X 0))))
+  test:k-code?
+  (test-case
+   "Produce #t on a K-code?"
+   (check-true (k-code? (code 'K 0))))
+  
+  (test-case
+   "Produce #f on a non-K-code?"
+   (check-false (k-code? (code 'X 0)))))
+
+;; -------------------- COORDINATE TESTS
 
 (define-test-suite
   test:empty-coord?
