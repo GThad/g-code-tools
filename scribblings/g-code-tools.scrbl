@@ -36,8 +36,9 @@ Note:
   It provides only limited support for manual G-coders.
  }
  @item{
-  We follow the @hyperlink["http://www.linuxcnc.org/docs/html/gcode/g-code.html"]{LinuxCNC}
-  standard for parsing and validation, but ensure contracts place looser restrictions.
+  We try to be standard-agnostic with our assumptions, but loosely follow the
+  @hyperlink["http://www.linuxcnc.org/docs/html/gcode/g-code.html"]{LinuxCNC}
+  standard.
  }
  ]
 
@@ -114,17 +115,6 @@ a command. The structures we provide reflect the organization of G-code.
  As for style, each command is written to a new line, and that is all.
  No comments or anything else is added to minimize file sizes. Before writing,
  every number is rounded to @racket[num-decs] decimal places.
- 
- Note that it is possible that the written G-code is syntactically malformed! We have
- noticed the following problems:
-
- @itemlist[
- @item{Written lines can be more than 256 characters (the maximum
-   defined by G-code) if the command is unusually large. This problem should rarely
-   arise if you are using semantically valid G-code, and keep numbers relatively small.}
- #:style 'ordered]
-
- These issues will be fixed in the future.
 }
 
 @section{Code and Command Functions}
