@@ -132,14 +132,19 @@
           (re-? #\.)
           (re-+ numeric)))
 
-(define-lex-abbrev g-code-comment
+(define-lex-abbrev g-code-par-comment
   (re-seq "(" (re-* (char-complement #\newline)) ")"))
+
+(define-lex-abbrev g-code-semicolon-comment
+  (re-seq ";" (re-* (char-complement #\newline))))
 
 (define-lex-abbrev g-code-word
   (re-seq g-code-sym (re-* blank) g-code-num))
 
 (define-lex-abbrev g-code-line
-  (re-+ (re-seq (re-* (re-or blank g-code-comment)) g-code-word)))
+  (re-+ (re-seq (re-* (re-or blank g-code-par-comment)) g-code-word)
+        (re-* blank)
+        g-code-semicolon-comment))
 
 ;; Consumes a list of code? and produces a command? out of them.
 (define (codes->command codes)
@@ -154,12 +159,14 @@
                 (lex-word input-port))]
          [g-code-num (string->number lexeme)]))
 
-;; Consumes an import-port?, reads a lin of G-code and produces
+;; Consumes an import-port?, reads a line of G-code and produces
 ;; the corresponding command.
 (define lex-line
   (lexer [(eof) null]
          [whitespace (lex-line input-port)]
-         [g-code-comment
+         [g-code-par-comment
+          (lex-line input-port)]
+         [g-code-semicolon-comment
           (lex-line input-port)]
          [g-code-word
           (cons (lex-word (open-input-string lexeme))
@@ -172,7 +179,7 @@
     (lexer [(eof) null]
            [whitespace (read-g-code input-port)]
            [#\% (read-g-code input-port)]
-           [g-code-comment
+           [g-code-par-comment
             (read-g-code input-port)]
            [g-code-line
             (cons (codes->command (lex-line (open-input-string lexeme)))
