@@ -38,7 +38,7 @@
   (j-code? (code? . -> . boolean?))
   (k-code? (code? . -> . boolean?))
 
-  (coordinate-code? (code? . -> . boolean?))
+  (coord-code? (code? . -> . boolean?))
   (empty-coord? (coord? . -> . boolean?))
   (x-coord? (coord? . -> . boolean?))
   (y-coord? (coord? . -> . boolean?))
@@ -241,7 +241,7 @@
 
 ;; -------------------- COORDINATE FUNCTIONS
 
-(define (coordinate-code? a-code)
+(define (coord-code? a-code)
   (or? (x-code? a-code)
        (y-code? a-code)
        (z-code? a-code)
@@ -321,7 +321,7 @@
 (define (coord? val)
   (and? (list? val)
         (andmap (lambda (a-code)
-                  (and (code? a-code) (coordinate-code? a-code)))
+                  (and (code? a-code) (coord-code? a-code)))
                 val)
         (or (empty-coord? val)
             (x-coord? val)

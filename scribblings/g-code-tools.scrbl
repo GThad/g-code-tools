@@ -193,7 +193,13 @@ codes. For example "G0 X20 Y20 Z20" tells the machine to move quickly to coordin
 (20, 20, 20). The X, Y, and Z codes together specify the coordinate.
 
 Within Racket, a coordinate is a @racket[list] with one, two, or three elements
-depending on the number of dimensions. Each element should be an X, Y, Z, I, J, or K code.
+depending on the number of dimensions. Each element should be a coordinate code.
+
+@defproc[(coord-code? [cd code?])
+         boolean?]{
+ Consumes a code and produces @racket[#t] if the code is an X-code, Y-code, Z-code,
+ I-code, J-code, or K-code.
+}
 
 @defproc[(coord? [val any/c]) boolean?]{
  Consumes anything and produces @racket[#t] if:

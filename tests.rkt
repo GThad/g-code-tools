@@ -217,3 +217,13 @@
   (check-false (coord? 10))
   (check-false (coord? "hello")))
 
+(define-test-suite
+  test:coord-code?
+  (check-true (coord-code? (code 'X 10)))
+  (check-true (coord-code? (code 'Y 10)))
+  (check-true (coord-code? (code 'Z 10)))
+  (check-true (coord-code? (code 'I 10)))
+  (check-true (coord-code? (code 'J 10)))
+  (check-true (coord-code? (code 'K 10)))
+  (check-false (coord-code? (code 'G 10)))
+  (check-false (coord-code? (code 'M 10))))
