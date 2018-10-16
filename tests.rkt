@@ -310,6 +310,28 @@
                                             (list (code 'X 20)
                                                   (code 'Y 20)))))))
 
+(define-test-suite
+  test:param-by-sym?
+  (test-case
+   "Produces #f when params is empty."
+   (check-false (param-by-sym 'X
+                              (command (code 'G 0)
+                                       null))))
+
+  (test-case
+   "Produces the code when code with sym is in params."
+   (check-equal? (code 'X 20) (param-by-sym 'X
+                                            (command (code 'G 0)
+                                                     (list (code 'X 20)
+                                                           (code 'Y 20))))))
+
+  (test-case
+   "Produces #f when code with sym is not in params."
+   (check-false (param-by-sym 'Z
+                              (command (code 'G 0)
+                                       (list (code 'X 20)
+                                             (code 'Y 20)))))))
+
 ;; -------------------- COORDINATE TESTS
 
 (define-test-suite

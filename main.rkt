@@ -63,6 +63,7 @@
   (run-tests test:j-command? 'verbose)
   (run-tests test:k-command? 'verbose)
   (run-tests test:param-in-command? 'verbose)
+  (run-tests test:param-by-sym? 'verbose)
 
   (run-tests test:empty-coord? 'verbose)
   (run-tests test:x-coord? 'verbose)
