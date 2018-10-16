@@ -11,22 +11,33 @@
 
 (define-test-suite
   test:g-code-sym?
- (check-true (g-code-sym? 'G))
- (check-true (g-code-sym? 'M))
- (check-true (g-code-sym? 'F))
- (check-true (g-code-sym? 'S))
- (check-true (g-code-sym? 'R))
- (check-true (g-code-sym? 'P))
- (check-true (g-code-sym? 'X))
- (check-true (g-code-sym? 'Y))
- (check-true (g-code-sym? 'Z))
- (check-true (g-code-sym? 'I))
- (check-true (g-code-sym? 'J))
- (check-true (g-code-sym? 'K))
- (check-false (g-code-sym? 'hello))
- (check-false (g-code-sym? "G"))
- (check-false (g-code-sym? 'g))
- (check-false (g-code-sym? 20)))
+  (test-case
+   "Produce #t on valid symbol?"
+   (check-true (g-code-sym? 'G))
+   (check-true (g-code-sym? 'M))
+   (check-true (g-code-sym? 'F))
+   (check-true (g-code-sym? 'S))
+   (check-true (g-code-sym? 'R))
+   (check-true (g-code-sym? 'P))
+   (check-true (g-code-sym? 'X))
+   (check-true (g-code-sym? 'Y))
+   (check-true (g-code-sym? 'Z))
+   (check-true (g-code-sym? 'I))
+   (check-true (g-code-sym? 'J))
+   (check-true (g-code-sym? 'K)))
+  
+  (test-case
+   "Produce #t on non-symbol?"
+   (check-false (g-code-sym? "G"))
+   (check-false (g-code-sym? 20)))
+  
+  (test-case
+   "Produce #f on non-valid symbol?"
+   (check-false (g-code-sym? 'hello)))
+  
+  (test-case
+   "Produce #f on lowercase version of valid letter?"
+   (check-false (g-code-sym? 'g))))
 
 (define-test-suite
  test:g-code?
