@@ -332,6 +332,21 @@
                                        (list (code 'X 20)
                                              (code 'Y 20)))))))
 
+(define-test-suite
+  test:named?
+  (test-case
+   "Produces #t when command has given name."
+   (check-true (named? (code 'G 0)
+                        (command (code 'G 0)
+                                 null))))
+
+  (test-case
+   "Produces #f when command does not have given name."
+   (check-false (named? (code 'G 2)
+                        (command (code 'G 0)
+                                 (list (code 'X 20)
+                                       (code 'Y 20)))))))
+
 ;; -------------------- COORDINATE TESTS
 
 (define-test-suite
