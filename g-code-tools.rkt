@@ -57,7 +57,7 @@
   (coord? predicate/c)
 
   (param-in-command? (code? command? . -> . boolean?))
-  (param-by-sym (g-code-sym? command? . -> . boolean?))
+  (param-by-sym (g-code-sym? command? . -> . (or/c code? #f)))
   (named? (code? command? . -> . boolean?))
 
   (g-command? (command? . -> . boolean?))
