@@ -7,7 +7,7 @@
 
 (provide (all-defined-out))
 
-;; -------------------- CODE AND COMMAND TESTS
+;; -------------------- CODE TESTS
 
 (define-test-suite
   test:g-code-sym?
@@ -158,6 +158,128 @@
   (test-case
    "Produce #f on a non-K-code?"
    (check-false (k-code? (code 'X 0)))))
+
+;; -------------------- COMMAND TESTS
+
+(define-test-suite
+  test:g-command?
+  (test-case
+   "Produce #t on a G-command?"
+   (check-true (g-command? (command (code 'G 0) null))))
+  
+  (test-case
+   "Produce #f on a non-G-command?"
+   (check-false (g-command? (command (code 'X 0) null)))))
+
+(define-test-suite
+  test:m-command?
+  (test-case
+   "Produce #t on a M-command?"
+   (check-true (m-command? (command (code 'M 0) null))))
+  
+  (test-case
+   "Produce #f on a non-M-command?"
+   (check-false (m-command? (command (code 'X 0) null)))))
+
+(define-test-suite
+  test:f-command?
+  (test-case
+   "Produce #t on a F-command?"
+   (check-true (f-command? (command (code 'F 0) null))))
+  
+  (test-case
+   "Produce #f on a non-F-command?"
+   (check-false (f-command? (command (code 'X 0) null)))))
+
+(define-test-suite
+  test:s-command?
+  (test-case
+   "Produce #t on a S-command?"
+   (check-true (s-command? (command (code 'S 0) null))))
+  
+  (test-case
+   "Produce #f on a non-S-command?"
+   (check-false (s-command? (command (code 'X 0) null)))))
+
+(define-test-suite
+  test:r-command?
+  (test-case
+   "Produce #t on a R-command?"
+   (check-true (r-command? (command (code 'R 0) null))))
+  
+  (test-case
+   "Produce #f on a non-R-command?"
+   (check-false (r-command? (command (code 'X 0) null)))))
+
+(define-test-suite
+  test:p-command?
+  (test-case
+   "Produce #t on a P-command?"
+   (check-true (p-command? (command (code 'P 0) null))))
+  
+  (test-case
+   "Produce #f on a non-P-command?"
+   (check-false (p-command? (command (code 'X 0) null)))))
+
+(define-test-suite
+  test:x-command?
+  (test-case
+   "Produce #t on a X-command?"
+   (check-true (x-command? (command (code 'X 0) null))))
+  
+  (test-case
+   "Produce #f on a non-X-command?"
+   (check-false (x-command? (command (code 'F 0) null)))))
+
+(define-test-suite
+  test:y-command?
+  (test-case
+   "Produce #t on a Y-command?"
+   (check-true (y-command? (command (code 'Y 0) null))))
+  
+  (test-case
+   "Produce #f on a non-Y-command?"
+   (check-false (y-command? (command (code 'X 0) null)))))
+
+(define-test-suite
+  test:z-command?
+  (test-case
+   "Produce #t on a Z-command?"
+   (check-true (z-command? (command (code 'Z 0) null))))
+  
+  (test-case
+   "Produce #f on a non-Z-command?"
+   (check-false (z-command? (command (code 'X 0) null)))))
+
+(define-test-suite
+  test:i-command?
+  (test-case
+   "Produce #t on a I-command?"
+   (check-true (i-command? (command (code 'I 0) null))))
+  
+  (test-case
+   "Produce #f on a non-I-command?"
+   (check-false (i-command? (command (code 'X 0) null)))))
+
+(define-test-suite
+  test:j-command?
+  (test-case
+   "Produce #t on a J-command?"
+   (check-true (j-command? (command (code 'J 0) null))))
+  
+  (test-case
+   "Produce #f on a non-J-command?"
+   (check-false (j-command? (command (code 'X 0) null)))))
+
+(define-test-suite
+  test:k-command?
+  (test-case
+   "Produce #t on a K-command?"
+   (check-true (k-command? (command (code 'K 0) null))))
+  
+  (test-case
+   "Produce #f on a non-K-command?"
+   (check-false (k-command? (command (code 'X 0) null)))))
 
 ;; -------------------- COORDINATE TESTS
 
