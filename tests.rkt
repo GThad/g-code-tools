@@ -102,6 +102,7 @@
 (define-test-suite
   test:empty-coord?
   (check-true (empty-coord? (vector)))
+  (check-false (empty-coord? (vector (code 'G 2))))
   (check-false (empty-coord? (vector (code 'X 10))))
   (check-false (empty-coord? (vector (code 'X 10) (code 'Y 10)))))
 
@@ -109,6 +110,7 @@
   test:x-coord?
   (check-true (x-coord? (vector (code 'X 10))))
   (check-false (x-coord? (vector)))
+  (check-false (x-coord? (vector (code 'G 2))))
   (check-false (x-coord? (vector (code 'Y 10))))
   (check-false (x-coord? (vector (code 'X 10) (code 'Y 10)))))
 
@@ -116,6 +118,7 @@
   test:y-coord?
   (check-true (y-coord? (vector (code 'Y 10))))
   (check-false (y-coord? (vector)))
+  (check-false (y-coord? (vector (code 'G 2))))
   (check-false (y-coord? (vector (code 'X 10))))
   (check-false (y-coord? (vector (code 'X 10) (code 'Y 10)))))
 
@@ -123,6 +126,7 @@
   test:z-coord?
   (check-true (z-coord? (vector (code 'Z 10))))
   (check-false (z-coord? (vector)))
+  (check-false (z-coord? (vector (code 'G 2))))
   (check-false (z-coord? (vector (code 'Y 10))))
   (check-false (z-coord? (vector (code 'X 10) (code 'Y 10)))))
 
@@ -131,6 +135,7 @@
   (check-true (xy-coord? (vector (code 'X 10) (code 'Y 10))))
   (check-false (xy-coord? (vector)))
   (check-false (xy-coord? (vector (code 'Y 10))))
+  (check-false (xy-coord? (vector (code 'G 2) (code 'M 3))))
   (check-false (xy-coord? (vector (code 'Y 10) (code 'X 10))))
   (check-false (xy-coord? (vector (code 'X 10) (code 'Y 10) (code 'Z 10)))))
 
@@ -139,6 +144,7 @@
   (check-true (xz-coord? (vector (code 'X 10) (code 'Z 10))))
   (check-false (xz-coord? (vector)))
   (check-false (xz-coord? (vector (code 'Y 10))))
+  (check-false (xz-coord? (vector (code 'G 2) (code 'M 3))))
   (check-false (xz-coord? (vector (code 'Z 10) (code 'X 10))))
   (check-false (xz-coord? (vector (code 'X 10) (code 'Y 10) (code 'Z 10)))))
 
@@ -147,6 +153,7 @@
   (check-true (yz-coord? (vector (code 'Y 10) (code 'Z 10))))
   (check-false (yz-coord? (vector)))
   (check-false (yz-coord? (vector (code 'Y 10))))
+  (check-false (yz-coord? (vector (code 'G 2) (code 'M 3))))
   (check-false (yz-coord? (vector (code 'Z 10) (code 'Y 10))))
   (check-false (yz-coord? (vector (code 'X 10) (code 'Y 10) (code 'Z 10)))))
 
@@ -155,6 +162,7 @@
   (check-true (xyz-coord? (vector (code 'X 10) (code 'Y 10) (code 'Z 10))))
   (check-false (xyz-coord? (vector)))
   (check-false (xyz-coord? (vector (code 'Y 10))))
+  (check-false (xyz-coord? (vector (code 'G 2) (code 'M 3) (code 'Z 3))))
   (check-false (xyz-coord? (vector (code 'X 10) (code 'Z 10))))
   (check-false (xyz-coord? (vector (code 'Z 10) (code 'X 10) (code 'Y 10))))
   (check-false (xyz-coord? (vector (code 'X 10) (code 'Y 10) (code 'Z 10) (code 'I 10)))))
@@ -163,6 +171,7 @@
   test:i-coord?
   (check-true (i-coord? (vector (code 'I 10))))
   (check-false (i-coord? (vector)))
+  (check-false (i-coord? (vector (code 'G 2))))
   (check-false (i-coord? (vector (code 'Y 10))))
   (check-false (i-coord? (vector (code 'I 10) (code 'J 10)))))
 
@@ -170,6 +179,7 @@
   test:j-coord?
   (check-true (j-coord? (vector (code 'J 10))))
   (check-false (j-coord? (vector)))
+  (check-false (j-coord? (vector (code 'G 2))))
   (check-false (j-coord? (vector (code 'X 10))))
   (check-false (j-coord? (vector (code 'I 10) (code 'J 10)))))
 
@@ -177,6 +187,7 @@
   test:k-coord?
   (check-true (k-coord? (vector (code 'K 10))))
   (check-false (k-coord? (vector)))
+  (check-false (k-coord? (vector (code 'G 2))))
   (check-false (k-coord? (vector (code 'Y 10))))
   (check-false (k-coord? (vector (code 'I 10) (code 'K 10)))))
 
@@ -184,6 +195,7 @@
   test:ij-coord?
   (check-true (ij-coord? (vector (code 'I 10) (code 'J 10))))
   (check-false (ij-coord? (vector)))
+  (check-false (ij-coord? (vector (code 'G 2) (code 'J 5))))
   (check-false (ij-coord? (vector (code 'I 10))))
   (check-false (ij-coord? (vector (code 'J 10) (code 'I 10))))
   (check-false (ij-coord? (vector (code 'I 10) (code 'J 10) (code 'K 10)))))
@@ -193,6 +205,7 @@
   (check-true (ik-coord? (vector (code 'I 10) (code 'K 10))))
   (check-false (ik-coord? (vector)))
   (check-false (ik-coord? (vector (code 'I 10))))
+  (check-false (ik-coord? (vector (code 'G 2) (code 'K 5))))
   (check-false (ik-coord? (vector (code 'K 10) (code 'I 10))))
   (check-false (ik-coord? (vector (code 'I 10) (code 'K 10) (code 'K 10)))))
 
@@ -201,6 +214,7 @@
   (check-true (jk-coord? (vector (code 'J 10) (code 'K 10))))
   (check-false (jk-coord? (vector)))
   (check-false (jk-coord? (vector (code 'J 10))))
+  (check-false (jk-coord? (vector (code 'G 2) (code 'J 5))))
   (check-false (jk-coord? (vector (code 'K 10) (code 'J 10))))
   (check-false (jk-coord? (vector (code 'I 10) (code 'J 10) (code 'K 10)))))
 
@@ -210,6 +224,21 @@
   (check-false (ijk-coord? (vector)))
   (check-false (ijk-coord? (vector (code 'Y 10))))
   (check-false (ijk-coord? (vector (code 'I 10) (code 'J 10))))
+  (check-false (ijk-coord? (vector (code 'G 2) (code 'J 5) (code 'M 3))))
   (check-false (ijk-coord? (vector (code 'K 10) (code 'J 10) (code 'I 10))))
   (check-false (ijk-coord? (vector (code 'I 10) (code 'J 10) (code 'K 10) (code 'X 10)))))
+
+(define-test-suite
+  test:coord?
+  (check-true (coord? (vector)))
+  (check-true (coord? (vector (code 'I 10))))
+  (check-true (coord? (vector (code 'Z 10))))
+  (check-true (coord? (vector (code 'I 10) (code 'J 10) (code 'K 10))))
+  (check-true (coord? (vector (code 'I 10) (code 'J 10))))
+  (check-false (ijk-coord? (vector (code 'K 10) (code 'J 10) (code 'I 10))))
+  (check-false (ijk-coord? (vector (code 'G 10))))
+  (check-false (ijk-coord? (vector (code 'G 10))))
+  (check-false (ijk-coord? (vector 1 2 3)))
+  (check-false (ijk-coord? 10))
+  (check-false (ijk-coord? "hello")))
 

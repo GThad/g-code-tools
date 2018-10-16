@@ -64,6 +64,7 @@
   (run-tests test:ik-coord? 'verbose)
   (run-tests test:jk-coord? 'verbose)
   (run-tests test:ijk-coord? 'verbose)
+  (run-tests test:coord? 'verbose)
   )
 
 (module+ main
