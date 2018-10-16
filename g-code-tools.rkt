@@ -165,7 +165,7 @@
           (cons (lex-word (open-input-string lexeme))
                 (lex-line input-port))]))
 
-;; Consumes an input-port?, reads tall the G-code and returns
+;; Consumes an input-port?, reads all the G-code and returns
 ;; the corresponding list of commands.
 (define (read-g-code [in (current-input-port)])
   (define lex
@@ -176,7 +176,13 @@
             (read-g-code input-port)]
            [g-code-line
             (cons (codes->command (lex-line (open-input-string lexeme)))
-                  (read-g-code input-port))]))
+                  (read-g-code input-port))]
+           [any-char
+            (error 'read-g-code
+                   "~a:~a Cannot read rest of line \"~a\"."
+                   (position-line start-pos)
+                   (+ (position-col start-pos) 1)
+                   (string-append lexeme (read-line in)))]))
 
   (lex in))
 
