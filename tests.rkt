@@ -477,3 +477,95 @@
   (check-true (coord-code? (code 'K 10)))
   (check-false (coord-code? (code 'G 10)))
   (check-false (coord-code? (code 'M 10))))
+
+(define-test-suite
+  test:get-coords
+  (test-case
+   "Produces 1-dim coord when only 1-dim is in params?"
+   (define-values (c1 c2)
+     (get-coords (command (code 'G 0)
+                          (list (code 'X 10)))))
+   (check-equal? (list (code 'X 10)) c1)
+   (check-equal? null c2))
+
+  (test-case
+   "Produces 2-dim coord when only 2-dim is in params?"
+   (define-values (c1 c2)
+     (get-coords (command (code 'G 0)
+                          (list (code 'X 10)
+                                (code 'Y 10)))))
+   (check-equal? (list (code 'X 10) (code 'Y 10)) c1)
+   (check-equal? null c2))
+
+  (test-case
+   "Produces 3-dim coord when only 3-dim is in params?"
+   (define-values (c1 c2)
+     (get-coords (command (code 'G 0)
+                          (list (code 'X 10)
+                                (code 'Y 10)
+                                (code 'Z 10)))))
+   (check-equal? (list (code 'X 10) (code 'Y 10) (code 'Z 10)) c1)
+   (check-equal? null c2))
+
+  (test-case
+   "Handles X,Y,Z coordinates and I,J,K coordinates."
+   (define-values (c1 c2)
+     (get-coords (command (code 'G 0)
+                          (list (code 'X 10)
+                                (code 'Y 10)
+                                (code 'Z 10)
+                                (code 'I 10)
+                                (code 'J 10)
+                                (code 'K 10)))))
+   (check-equal? (list (code 'X 10) (code 'Y 10) (code 'Z 10)) c1)
+   (check-equal? (list (code 'I 10) (code 'J 10) (code 'K 10)) c2))
+
+  (test-case
+   "Ignores order of coord codes in params?"
+   (define-values (c1 c2)
+     (get-coords (command (code 'G 0)
+                          (list (code 'Y 10)
+                                (code 'X 1000)))))
+   (define-values (c3 c4)
+     (get-coords (command (code 'G 0)
+                          (list (code 'X 10)
+                                (code 'Y 1000)))))
+   (check-equal? (list (code 'X 1000) (code 'Y 10)) c1)
+   (check-equal? null c2)
+   (check-equal? (list (code 'X 10) (code 'Y 1000)) c3)
+   (check-equal? null c4))
+  
+  (test-case
+   "Ignores non-coord codes in the params?"
+   (define-values (c1 c2)
+     (get-coords (command (code 'G 0)
+                          (list (code 'X 10)
+                                (code 'F 1000)
+                                (code 'S 50)))))
+   (check-equal? (list (code 'X 10)) c1)
+   (check-equal? null c2))
+
+  (test-case
+   "Produces canonical ordering?"
+   (define-values (c1 c2)
+     (get-coords (command (code 'G 0)
+                          (list (code 'X 10)
+                                (code 'Y 10)))))
+   (define-values (c3 c4)
+     (get-coords (command (code 'G 0)
+                          (list (code 'I 10)
+                                (code 'J 10)))))
+   (define-values (c5 c6)
+     (get-coords (command (code 'G 0)
+                          (list (code 'X 10)
+                                (code 'Y 10)
+                                (code 'Z 10)))))
+   
+   (check-equal? (list (code 'X 10) (code 'Y 10)) c1)
+   (check-equal? null c2)
+   
+   (check-equal? null c3)
+   (check-equal? (list (code 'I 10) (code 'J 10)) c4)
+
+   (check-equal? (list (code 'X 10) (code 'Y 10) (code 'Z 10)) c5)
+   (check-equal? null c6)))
