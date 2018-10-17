@@ -123,6 +123,11 @@
       (lambda (obj) 'command)
       (lambda (obj) (list (command-name obj) (command-params obj)))))])
 
+;; Consumes anything and produces #t if given a list of command?
+(define (program? val)
+  (and? (list? val)
+        (andmap command? val)))
+
 ;; -------------------- PARSING
 
 (define-lex-abbrev g-code-sym

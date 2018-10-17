@@ -43,10 +43,13 @@ Note:
  ]
 
 @section{G-code Structures}
-A G-code program consists of commands organized into lines. A proper
-program has a single command per line. A command is made up of codes.
-A single code can be a command or multiple codes can together define
-a command. The structures we provide reflect the organization of G-code.
+A G-code program is very similar to assembly. A @emph{program} is a list
+of commands organized into lines: one command on each line.
+A @emph{command} is made up of codes, separated by spaces. It has two
+components, the name of the command and its parameters. Each of these
+are codes.
+A @emph{code} is a letter and a number. The structures we provide reflect exactly
+this organization.
 
 @defproc[(g-code-sym? [val any/c]) boolean?]{
  Consumes anything and produces @racket[#t] if @racket[val] is any of
@@ -88,6 +91,53 @@ a command. The structures we provide reflect the organization of G-code.
  ;; there are 2 actual commands.
  (command (code 'G 0) (list (code 'X 100) (code 'Y 100)
  (code 'G 0) (code 'X 0) (code 'Y 0)))
+ )
+}
+
+@defproc[(program? [val any/c]) boolean?]{
+ Consumes anything and produces @racket[#t] if @racket[val] is
+ a list of commands.
+}
+
+@section{G-code Macros}
+Since structures are annoying to write, we provide some convenient macros
+for writing G-code in Racket.
+
+@defform[(cd sym+num)]{
+ Produces codes from a symbolic code.
+
+ @#reader scribble/comment-reader
+ (racketblock
+ ;; (code 'G 0)
+ (cd G0)
+ ;; (code 'X 120.45)
+ (cd X120.45)
+ ;; Error!
+ (cd X 120.45)
+ )
+}
+
+@defform[(cmd cd-list)]{
+ Produces a command from a list of symbolic codes.
+
+ @#reader scribble/comment-reader
+ (racketblock
+ ;; (command (code 'G 0) (list (code 'X 10) (code 'Y 10)))
+ (cmd G0 X10 Y10)
+ )
+}
+
+@defform[(cmds cmd-list)]{
+ Produces a program from a list of a list of symbolic codes.
+
+ @#reader scribble/comment-reader
+ (racketblock
+ ;; (list (command (code 'G 0) (list (code 'X 10) (code 'Y 10)))
+ ;;       (command (code 'G 0) (list (code 'X 20) (code 'Y 20)))
+ ;;       (command (code 'M 5) '()))
+ (cmds (G0 X10 Y10)
+       (G0 X20 Y20)
+       (M5))
  )
 }
 
