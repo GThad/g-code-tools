@@ -15,6 +15,7 @@
          racket/draw
          racket/class
          parser-tools/lex
+         (for-syntax racket/base)
          (prefix-in re- parser-tools/lex-sre))
 
 (provide
@@ -237,6 +238,47 @@
 ;; Like member but returns #t or #f.
 (define-syntax-rule (member? val lst)
   (->boolean (member val lst)))
+
+;; Converts (cd <sym><num>) into (code '<sym> <num>).
+(define-syntax (cd stx)
+  (define sym+num (symbol->string (syntax->datum (cadr (syntax->list stx)))))
+  (define-values (sym num) (values (string->symbol (substring sym+num 0 1))
+                                   (string->number (substring sym+num 1))))
+  #`(code '#,sym #,num))
+
+;; Converts (cmd <sym><num> <p-sym><p-num> ...) into
+;; (command (code '<sym> <num>) (list (code '<p-sym> <p-num>) ...))
+(define-syntax (cmd stx)
+  (define (codeish-stx->code-stx a-stx)
+    (define sym+num (symbol->string (syntax->datum a-stx)))
+    (define-values (sym num) (values (string->symbol (substring sym+num 0 1))
+                                     (string->number (substring sym+num 1))))
+    #`(code '#,sym #,num))
+  
+  (define commandish-stx (cdr (syntax->list stx)))
+  (define-values (name params) (values (codeish-stx->code-stx (car commandish-stx))
+                                       (map codeish-stx->code-stx (cdr commandish-stx))))
+  #`(command #,name (list #,@params)))
+
+;; Converts (cmds (<command>) ...) into
+;; (list (command <name> <params>) ...)
+(define-syntax (cmds stx)
+  (define (codeish-stx->code-stx a-stx)
+    (define sym+num (symbol->string (syntax->datum a-stx)))
+    (define-values (sym num) (values (string->symbol (substring sym+num 0 1))
+                                     (string->number (substring sym+num 1))))
+    #`(code '#,sym #,num))
+
+  (define (commandish-stx->command-stx a-stx)
+    (define commandish-list (syntax->list a-stx))
+    (define-values (name params) (values (codeish-stx->code-stx (car commandish-list))
+                                         (map codeish-stx->code-stx (cdr commandish-list))))
+    #`(command #,name (list #,@params)))
+  
+  (define programish-stx (cdr (syntax->list stx)))
+  (define commands (map commandish-stx->command-stx programish-stx))
+  
+  #`(list #,@commands))
 
 ;; -------------------- CODE STRUCT FUNCTIONS
 
