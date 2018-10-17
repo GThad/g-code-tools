@@ -12,6 +12,8 @@
          racket/struct
          racket/bool
          racket/list
+         racket/draw
+         racket/class
          parser-tools/lex
          (prefix-in re- parser-tools/lex-sre))
 
@@ -447,3 +449,235 @@
 (define (update-program-coords cmds updater)
   (map (lambda (a-cmd) (update-coords a-cmd updater))
        cmds))
+
+;; -------------------- G-CODE DC
+
+(define g-code-dc%
+  (class* object% (dc<%>)
+
+    (define/public (cache-font-metrics-key)
+      (void))
+    
+    (define/public (clear)
+      (void))
+
+    (define/public (copy x y width height x2 y2)
+      (void))
+
+    (define/public (draw-arc x y width height start-radius end-radius)
+      (void))
+
+    (define/public (draw-bitmap source dest-x dest-y height x2 y2
+                                [style 'solid] [color (send the-color-database find-color "black")]
+                                [mask #f])
+      (void))
+
+    (define/public (draw-bitmap-section source dest-x dest-y height src-x src-y src-width src-height
+                                [style 'solid] [color (send the-color-database find-color "black")]
+                                [mask #f])
+      (void))
+
+    (define/public (draw-ellipse x y width height)
+      (void))
+
+    (define/public (draw-line x1 y1 x2 y2)
+      (void))
+
+    (define/public (draw-lines points [xoffset 0] [yoffset 0])
+      (void))
+
+    (define/public (draw-path path [xoffset 0] [yoffset 0] [fill-style 'odd-even])
+      (void))
+
+    (define/public (draw-point x y)
+      (void))
+
+    (define/public (draw-polygon points [xoffset 0] [yoffset 0] [fill-style 'odd-even])
+      (void))
+
+    (define/public (draw-rectangle x y width height)
+      (void))
+
+    (define/public (draw-rounded-rectangle x y width height [radius -0.25])
+      (void))
+
+    (define/public (draw-spline x1 y1 x2 y2 x3 y3)
+      (void))
+
+    (define/public (draw-text text x y [combine #f] [offset 0] [angle 0])
+      (void))
+
+    (define/public (end-doc)
+      (void))
+
+    (define/public (end-page)
+      (void))
+
+    (define/public (erase)
+      (void))
+
+    (define/public (flush)
+      (void))
+
+    (define/public (get-alpha)
+      (void))
+
+    (define/public (get-background)
+      (void))
+
+    (define/public (get-backing-scale)
+      (void))
+
+    (define/public (get-brush)
+      (void))
+
+    (define/public (get-char-height)
+      (void))
+
+    (define/public (get-char-width)
+      (void))
+
+    (define/public (get-clipping-region)
+      (void))
+    
+    (define/public (get-device-scale)
+      (void))
+    
+    (define/public (get-font)
+      (void))
+    
+    (define/public (get-gl-context)
+      (void))
+    
+    (define/public (get-initial-matrix)
+      (void))
+
+    (define/public (get-origin)
+      (void))
+
+    (define/public (get-pen)
+      (void))
+
+    (define/public (get-path-bounding-box path type)
+      (void))
+
+    (define/public (get-rotation)
+      (void))
+
+    (define/public (get-scale)
+      (void))
+
+    (define/public (get-size)
+      (void))
+
+    (define/public (get-smoothing)
+      (void))
+
+    (define/public (get-text-background)
+      (void))
+
+    (define/public (get-text-extent string [font #f] [combine? #f] [offset 0])
+      (void))
+
+    (define/public (get-text-foreground)
+      (void))
+
+    (define/public (get-text-mode)
+      (void))
+
+    (define/public (get-transformation)
+      (void))
+
+    (define/public (glyph-exists? c)
+      (void))
+
+    (define/public (ok?)
+      (void))
+
+    (define/public (resume-flush)
+      (void))
+
+    (define/public (rotate angle)
+      (void))
+
+    (define/public (scale x-scale y-scale)
+      (void))
+
+    (define/public (set-alignment-scale scale)
+      (void))
+
+    (define/public (set-alpha opacity)
+      (void))
+
+    (define/public (set-background color)
+      (void))
+
+    (public set-brush)
+    (define set-brush
+      (case-lambda [(brush)
+                    (void)]
+                   [(color style)
+                    (void)]))
+
+    (define/public (set-clipping-rect x y width height)
+      (void))
+
+    (define/public (set-clipping-region rgn)
+      (void))
+
+    (define/public (set-font font)
+      (void))
+
+    (define/public (set-initial-matrix m)
+      (void))
+
+    (define/public (set-origin x y)
+      (void))
+
+    (public set-pen)
+    (define set-pen
+      (case-lambda [(pen)
+                    (void)]
+                   [(color width style)
+                    (void)]))
+
+    (define/public (set-rotation angle)
+      (void))
+
+    (define/public (set-scale x-scale y-scale)
+      (void))
+
+    (define/public (set-smoothing mode)
+      (void))
+
+    (define/public (set-text-background color)
+      (void))
+
+    (define/public (set-text-foreground color)
+      (void))
+
+    (define/public (set-text-mode mode)
+      (void))
+
+    (define/public (set-transformation t)
+      (void))
+
+    (define/public (start-doc message)
+      (void))
+
+    (define/public (start-page)
+      (void))
+
+    (define/public (suspend-flush)
+      (void))
+
+    (define/public (transform m)
+      (void))
+
+    (define/public (translate dx dy)
+      (void))
+
+    (define/public (try-color try result)
+      (void))
+    
+    ))
