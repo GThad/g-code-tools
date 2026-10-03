@@ -1,6 +1,8 @@
 #lang info
 (define collection "g-code-tools")
-(define deps '("base" "parser-tools-lib"))
+(define deps '("draw-lib"
+               "rackunit-lib"
+               "base" "parser-tools-lib"))
 (define build-deps '("scribble-lib" "racket-doc" "rackunit-lib"))
 (define scribblings '(("scribblings/g-code-tools.scrbl" ())))
 (define pkg-desc "A collection of tools for manipulating G-code.")
